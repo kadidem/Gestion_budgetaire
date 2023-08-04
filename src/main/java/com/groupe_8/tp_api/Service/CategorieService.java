@@ -25,9 +25,8 @@ public class CategorieService {
         Categorie categorie1 = categorieRepository.findById(idCategorie.getIdCategorie()).orElse(null);
         if ( categorie1 != null) {
             categorie1.setTitre(categorie1.getTitre());
-            return categorieRepository.save(categorie1);
         }
-        return null;
+        return categorieRepository.save(categorie1);
     }
     public void supprimer(Long idCategorie) {
         Optional<Categorie> categorie = categorieRepository.findById(idCategorie);
