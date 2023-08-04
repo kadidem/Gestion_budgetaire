@@ -30,4 +30,7 @@ public class Depenses {
 
     @ManyToOne(cascade = CascadeType.MERGE)
     private  Categorie categorie;
+
+    @ManyToOne(cascade = CascadeType.MERGE)
+    private  Type type;
 }

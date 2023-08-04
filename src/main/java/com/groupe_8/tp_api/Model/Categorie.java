@@ -1,5 +1,6 @@
 package com.groupe_8.tp_api.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -13,7 +14,7 @@ import java.util.List;
 @Entity
 public class Categorie {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idCategorie;
 
     @Column( nullable=false, unique=true)
@@ -21,6 +22,8 @@ public class Categorie {
     private String titre;
 
     @ManyToOne
+    //@JsonIgnoreProperties(value = {})
+    @JoinColumn(name = "idUtilisateur")
     private Utilisateur utilisateur;
 
     @OneToMany(mappedBy="categorie")

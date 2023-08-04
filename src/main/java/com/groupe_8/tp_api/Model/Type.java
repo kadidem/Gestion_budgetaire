@@ -11,7 +11,7 @@ import java.util.List;
 public class Type {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
    private long idType;
 
     @Column( nullable=false, unique=true)
@@ -21,6 +21,6 @@ public class Type {
     @ManyToOne
     private Utilisateur utilisateur;
 
-    @OneToMany(mappedBy = "typeDepenses")
+    @OneToMany(mappedBy = "type")
     private List<Depenses> depenses;
 }
