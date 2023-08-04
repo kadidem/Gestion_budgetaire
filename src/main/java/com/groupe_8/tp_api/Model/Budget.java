@@ -36,4 +36,11 @@ public class Budget {
     @NotNull(message = "Désole la date ne doit pas etre null")
     @Column(nullable = false)
     private Date dateFint;
+
+    @ManyToOne
+    private Utilisateur utilisateur;
+
+    @ManyToOne
+    private Categorie categorie;
+
 }
