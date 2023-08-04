@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -31,11 +32,11 @@ public class Budget {
 
     @NotNull(message = "Désole la date ne doit pas etre null")
     @Column(nullable = false)
-    private Date dateDebut;
+    private LocalDate dateDebut;
 
     @NotNull(message = "Désole la date ne doit pas etre null")
     @Column(nullable = false)
-    private Date dateFint;
+    private LocalDate dateFin;
 
     @ManyToOne
     private Utilisateur utilisateur;
