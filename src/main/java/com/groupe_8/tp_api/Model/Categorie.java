@@ -23,7 +23,7 @@ public class Categorie {
     @ManyToOne
     private Utilisateur utilisateur;
 
-    @OneToMany(mappedBy="categorieDepenses")
+    @OneToMany(mappedBy="categorie")
     private List<Depenses> depenses;
 
     @OneToMany(mappedBy = "categorieBudget")
