@@ -27,4 +27,8 @@ public class DepensesService {
                     return depensesRepository.save(qu);
                 }).orElseThrow(() -> new RuntimeException(("Dépenses non trouvé")));
     }
+    public String Supprimer(long id){
+        depensesRepository.deleteById(id);
+        return "Depenses Supprimer";
+    }
 }
