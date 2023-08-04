@@ -1,8 +1,11 @@
 package com.groupe_8.tp_api.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -18,4 +21,9 @@ public class Utilisateur {
     private String email;
     @Column(nullable = false, unique = true)
     private String motDePasse;
+    @OneToMany(mappedBy = "utilisateur",cascade = CascadeType.ALL)
+    private List<Budget> budgets;
+    @OneToMany(mappedBy = "utilisateur",cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Depenses> depenses;
 }
