@@ -4,14 +4,24 @@ import com.groupe_8.tp_api.Model.Depenses;
 import com.groupe_8.tp_api.Service.DepensesService;
 import lombok.AllArgsConstructor;
 
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/Depenses")
+@RequestMapping("Depenses")
 @AllArgsConstructor
 public class DepensesController {
-    private final DepensesService depensesService;
-
+    @Autowired
+    private DepensesService depensesService;
+   @PostMapping("/create")
+    public Depenses create(@RequestBody Depenses depenses){
+        return depensesService.creer(depenses);
+    }
+    @PostMapping("/update")
+    public  Depenses update(@PathVariable long id,@RequestBody Depenses depenses){
+      return depensesService.modifier(id, depenses);
+    }
+    public  String delete(long id){
+       return depensesService.Supprimer(id);
+    }
 }

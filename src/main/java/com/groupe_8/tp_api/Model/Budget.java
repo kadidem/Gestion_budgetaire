@@ -16,16 +16,15 @@ public class Budget {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idBudget;
 
-    @NotNull(message = "Désole le montant ne doit pas etre null")
+
     @Min(value = 1000, message = "Désole le montant doit etre superieure ou égale a 1000")
     @Column(nullable = false)
     private int montant;
 
-    @NotNull(message = "Désole le montant ne doit pas etre null")
+
     @Column(nullable = false)
     private int montantRestant;
 
-    @NotNull(message = "Désole le montant ne doit pas etre null")
     @Column(nullable = false)
     private int montantAlerte;
 
@@ -33,7 +32,7 @@ public class Budget {
     @Column(nullable = false)
     private Date dateDebut;
 
-    @NotNull(message = "Désole la date ne doit pas etre null")
+
     @Column(nullable = false)
     private Date dateFint;
 

@@ -26,6 +26,6 @@ public class Categorie {
     @OneToMany(mappedBy="categorie")
     private List<Depenses> depenses;
 
-    @OneToMany(mappedBy = "categorieBudget")
+    @OneToMany(mappedBy = "categorie")
     private List<Budget> budgets;
 }

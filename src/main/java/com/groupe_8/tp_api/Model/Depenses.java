@@ -1,32 +1,33 @@
 package com.groupe_8.tp_api.Model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
 
 import java.util.Collection;
 import java.util.Date;
 
 @Entity
 @Data
-@NoArgsConstructor
 public class Depenses {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idDepenses;
+
+    @Lob
+    @Column(nullable = false)
     private String description;
-    private String montant;
+
+    @Column(nullable = false)
+    private int montant;
+
+    @Column(nullable = false)
     private Date date;
 
+    @ManyToOne(cascade = CascadeType.MERGE)
+    private Utilisateur utilisateur;
 
-    @OneToMany(mappedBy = "depensesCategorie")
-    private Collection<Categorie> categorie;
-
-    public Collection<Categorie> getCategorie() {
-        return categorie;
-    }
-
-    public void setCategorie(Collection<Categorie> categorie) {
-        this.categorie = categorie;
-    }
+    @ManyToOne(cascade = CascadeType.MERGE)
+    private  Categorie categorie;
 }

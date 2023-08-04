@@ -37,4 +37,16 @@ public class ControllerExceptionHandler {
         return errorMessage;
     }
 
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorMessage globalException(Exception ex, WebRequest request){
+        ErrorMessage errorMessage = new ErrorMessage(
+                HttpStatus.CONTINUE.value(),
+                new Date(),
+                ex.getMessage(),
+                request.getDescription(false)
+        );
+        return errorMessage;
+    }
+
 }

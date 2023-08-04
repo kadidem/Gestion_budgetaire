@@ -1,5 +1,6 @@
 package com.groupe_8.tp_api.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,6 +24,6 @@ public class Utilisateur {
     @OneToMany(mappedBy = "utilisateur",cascade = CascadeType.ALL)
     private List<Budget> budgets;
     @OneToMany(mappedBy = "utilisateur",cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Depenses> depenses;
-
 }
