@@ -18,4 +18,14 @@ public class Utilisateur {
     private String email;
     @Column(nullable = false, unique = true)
     private String motDePasse;
+    @ManyToOne(optional = false)
+    private Categorie categories;
+
+    public Categorie getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Categorie categories) {
+        this.categories = categories;
+    }
 }
