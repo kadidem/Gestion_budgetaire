@@ -14,7 +14,7 @@ public class DepensesController {
     @Autowired
     private DepensesService depensesService;
    @PostMapping("/create")
-    public Depenses create(Depenses depenses){
+    public Depenses create(@RequestBody Depenses depenses){
         return depensesService.creer(depenses);
     }
     @PostMapping("/update")
