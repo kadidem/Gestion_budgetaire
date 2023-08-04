@@ -9,15 +9,16 @@ import java.util.Date;
 
 @Entity
 @Data
-@NoArgsConstructor
 public class Depenses {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idDepenses;
+    @Lob
+    @Column(nullable = false)
     private String description;
-    @NotNull(message = "Désole le montant ne doit pas etre null")
-    private String montant;
-    @NotNull(message = "Choisissez la date")
+    @Column(nullable = false)
+    private int montant;
+
     private Date date;
 
     @ManyToOne(cascade = CascadeType.MERGE)
