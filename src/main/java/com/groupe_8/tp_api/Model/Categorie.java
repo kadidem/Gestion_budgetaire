@@ -16,6 +16,6 @@ public class Categorie {
     private long idCategorie;
 
     @Column( nullable=false, unique=true)
-    @NotNull(message = "Il de contenu pour ce champ")
+    @NotNull(message = "Il faut de contenu pour ce champ")
     private String titre;
 }
