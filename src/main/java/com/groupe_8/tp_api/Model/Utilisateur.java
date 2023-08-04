@@ -24,4 +24,5 @@ public class Utilisateur {
     private List<Budget> budgets;
     @OneToMany(mappedBy = "utilisateur",cascade = CascadeType.ALL)
     private List<Depenses> depenses;
+
 }

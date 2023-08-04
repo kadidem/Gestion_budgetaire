@@ -1,12 +1,10 @@
 package com.groupe_8.tp_api.Model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Collection;
 import java.util.Date;
 
 @Entity
@@ -21,4 +19,14 @@ public class Depenses {
     private Date date;
 
 
+    @OneToMany(mappedBy = "depensesCategorie")
+    private Collection<Categorie> categorie;
+
+    public Collection<Categorie> getCategorie() {
+        return categorie;
+    }
+
+    public void setCategorie(Collection<Categorie> categorie) {
+        this.categorie = categorie;
+    }
 }
