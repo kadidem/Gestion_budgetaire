@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 
+import java.util.Collection;
 import java.util.Date;
 
 @Entity
@@ -29,5 +30,4 @@ public class Depenses {
 
     @ManyToOne(cascade = CascadeType.MERGE)
     private  Categorie categorie;
-
 }
