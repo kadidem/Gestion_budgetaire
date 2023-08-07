@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("Depenses")
 @AllArgsConstructor
@@ -17,11 +19,16 @@ public class DepensesController {
     public Depenses create(@RequestBody Depenses depenses){
         return depensesService.creer(depenses);
     }
-    @PostMapping("/update")
+    @PostMapping("/update/{id}")
     public  Depenses update(@PathVariable long id,@RequestBody Depenses depenses){
       return depensesService.modifier(id, depenses);
     }
-    public  String delete(long id){
+  @GetMapping("/read")
+    public List<Depenses> read(){
+       return depensesService.lire();
+    }
+  @DeleteMapping("delete/{id}")
+   public  String delete(@PathVariable long id){
        return depensesService.Supprimer(id);
     }
 }
