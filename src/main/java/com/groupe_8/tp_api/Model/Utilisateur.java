@@ -15,10 +15,10 @@ import java.util.List;
 @Entity
 @Data
 
-public class Utilisateur implements Serializable, UserDetails {
+public class Utilisateur  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id_utilisateur;
+    private long idUtilisateur;
     @Column(nullable = false)
     private String username;
    @Column(nullable = false)
@@ -29,37 +29,6 @@ public class Utilisateur implements Serializable, UserDetails {
     private String email;
     @Column(nullable = false, unique = true)
     private String motDePasse;
-    @Override
-    public boolean isAccountNonExpired() {
-        return false;
-    }
-    @Override
-    public boolean isAccountNonLocked() {
-        return false;
-    }
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return false;
-    }
-    @Override
-    public boolean isEnabled() {
-        return false;
-    }
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
-    }
-
-    @Override
-    public String getPassword() {
-        return null;
-    }
-
-    @Override
-    public String getUsername() {
-        return null;
-    }
-
     @OneToMany(mappedBy = "utilisateur",cascade = CascadeType.ALL)
     private List<Budget> budgets;
     @OneToMany(mappedBy = "utilisateur",cascade = CascadeType.ALL)
