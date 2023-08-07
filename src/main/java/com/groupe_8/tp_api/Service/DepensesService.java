@@ -5,6 +5,7 @@ import com.groupe_8.tp_api.Repository.DepensesRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -13,6 +14,7 @@ import java.util.List;
 public class DepensesService {
     private final DepensesRepository depensesRepository;
     public Depenses creer(Depenses depenses){
+        depenses.setDate(LocalDate.now());
         return depensesRepository.save(depenses);
     }
     public List<Depenses> lire(){
@@ -23,7 +25,7 @@ public class DepensesService {
                 .map(qu ->{
                     qu.setDescription(depenses.getDescription());
                     qu.setMontant(depenses.getMontant());
-                    qu.setDate(depenses.getDate());
+                    qu.setDate(LocalDate.now());
                     return depensesRepository.save(qu);
                 }).orElseThrow(() -> new RuntimeException(("Dépenses non trouvé")));
     }
