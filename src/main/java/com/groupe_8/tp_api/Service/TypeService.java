@@ -24,13 +24,6 @@ public class TypeService {
         return typeRepository.findAll();
     }
 
-    /*public Type modifier(Long type, Type idType) {
-        Type newType = typeRepository.findById(idType.getIdType()).orElse(null);
-        if (newType != null) {
-            newType.setTitre(newType.getTitre());
-        }
-        return typeRepository.save(newType);
-    }*/
     public Type modifier(Long idType, Type type) {
         Type typeAModifier = typeRepository.findById(idType).orElse(null);
         if (typeAModifier != null) {
