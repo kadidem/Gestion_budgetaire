@@ -1,5 +1,6 @@
 package com.groupe_8.tp_api.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -18,14 +19,18 @@ public class Budget {
     private long idBudget;
 
 
+    @NotNull
     @Min(value = 1000, message = "Désole le montant doit etre superieure ou égale a 1000")
     @Column(nullable = false)
     private int montant;
 
 
+    @NotNull
     @Column(nullable = false)
     private int montantRestant;
 
+    @NotNull
+    @Min(value = 1000, message = "Désole le montant doit etre superieure ou égale a 0")
     @Column(nullable = false)
     private int montantAlerte;
 
@@ -37,10 +42,14 @@ public class Budget {
     @Column(nullable = false)
     private LocalDate dateFin;
 
+    @NotNull
     @ManyToOne
+    @JsonIgnoreProperties(value = {"budgets","depenses"})
     private Utilisateur utilisateur;
 
+    @NotNull
     @ManyToOne
+    @JsonIgnoreProperties(value = {"budgets","utilisateur"})
     private Categorie categorie;
 
 }
