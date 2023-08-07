@@ -21,6 +21,6 @@ public class Type {
     @ManyToOne
     private Utilisateur utilisateur;
 
-    @OneToMany(mappedBy = "typeDepenses")
+    @OneToMany(mappedBy = "type")
     private List<Depenses> depenses;
 }
