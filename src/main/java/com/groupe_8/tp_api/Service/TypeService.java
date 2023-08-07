@@ -2,7 +2,6 @@ package com.groupe_8.tp_api.Service;
 
 import com.groupe_8.tp_api.Model.Type;
 import com.groupe_8.tp_api.Repository.TypeRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,14 +23,12 @@ public class TypeService {
         return typeRepository.findAll();
     }
 
-    public Type modifier(Long idType, Type type) {
-        Type typeAModifier = typeRepository.findById(idType).orElse(null);
+    public Type modifier( Type type) {
+        Type typeAModifier = typeRepository.findById(type.getIdType()).orElse(null);
         if (typeAModifier != null) {
             typeAModifier.setTitre(type.getTitre());
-            return typeRepository.save(typeAModifier);
-        } else {
-            return null;
         }
+        return typeRepository.save(typeAModifier);
     }
 
     public void supprimer(Long idType) {
@@ -40,5 +37,6 @@ public class TypeService {
             typeRepository.deleteById(idType);
         }
     }
+
 }
 
