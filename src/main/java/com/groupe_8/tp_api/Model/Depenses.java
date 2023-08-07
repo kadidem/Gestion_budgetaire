@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Date;
 
@@ -22,8 +23,9 @@ public class Depenses {
     @Column(nullable = false)
     private int montant;
 
+    @Temporal(TemporalType.DATE)
     @Column(nullable = false)
-    private Date date;
+    private LocalDate date;
 
     @ManyToOne(cascade = CascadeType.MERGE)
     private Utilisateur utilisateur;
