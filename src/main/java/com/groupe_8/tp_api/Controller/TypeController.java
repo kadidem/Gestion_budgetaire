@@ -14,22 +14,22 @@ import java.util.List;
 public class TypeController {
     private final TypeService typeService;
 
-    @GetMapping("creer")
+    @GetMapping("/creer")
     public String creer(Type type){
         typeService.creer(type);
         return "La categorie"+ type +"a été créée";
     }
-    @GetMapping("lire")
+    @GetMapping("/lire")
     public List<Type> lire() {
         typeService.lire();
         return null;
     }
-    @PutMapping("modifier")
+    @PutMapping("/modifier")
     public String modifier(@RequestBody Type type){
         typeService.modifier(type);
         return "Modification reussie";
     }
-    @DeleteMapping("Supprimer")
+    @DeleteMapping("/Supprimer")
     public String supprimer(@RequestParam("id") long idType){
         typeService.supprimer(idType);
         return "Vous avez supprimé la categorie à l'id "+idType;
