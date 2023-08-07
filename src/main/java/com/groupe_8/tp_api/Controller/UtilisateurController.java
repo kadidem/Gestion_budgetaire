@@ -27,4 +27,10 @@ public class UtilisateurController {
             utilisateurService.editutilisateur(id,utilisateur);}
     @DeleteMapping("/delete/{id}")
     public String deleteUtilisateurById(@PathVariable Long id){return utilisateurService.deleteUtilisateurById(id);}
+    @PostMapping("/login")
+    public Object connexion(@RequestParam("email") String email,
+                            @RequestParam("motDePasse") String motDePasse) {
+        return utilisateurService.connectionUtilisateur(email, motDePasse);
+    }
 }
+

@@ -2,7 +2,8 @@ package com.groupe_8.tp_api.Service;
 
 import com.groupe_8.tp_api.Model.Utilisateur;
 import com.groupe_8.tp_api.Repository.UtilisateurRepository;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,14 +11,32 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
-public class UtilisateurService {
+public class UtilisateurService  {
 
     private final UtilisateurRepository utilisateurRepository;
 
-
-
-    public Utilisateur createUtilisateur(Utilisateur utilisateur){return utilisateurRepository.save(utilisateur);}
+    @Autowired
+    public UtilisateurService(UtilisateurRepository userRepository) {
+        this.utilisateurRepository = userRepository;
+    }
+  /*  @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Objects.requireNonNull(username);
+        Utilisateur utilisateur = utilisateurRepository.findUserWithName(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return utilisateur;
+        Utilisateur utilisateur =utilisateurRepository.findUserWithName(username);
+        if(utilisateur ==null) {
+            throw new UsernameNotFoundException("L'utilisateur ne correspond pas au username" + utilisateur);
+        }
+        return new Utilisateur();
+        }
+*/
+    public Utilisateur createUtilisateur(Utilisateur utilisateur){
+        if (utilisateurRepository.findByEmail(utilisateur.getEmail()) == null) {
+            return utilisateurRepository.save(utilisateur);
+        } else {
+            throw new EntityExistsException("Cet email existe déjà");}}
    public List<Utilisateur> getAllUtilisateur(){return utilisateurRepository.findAll();}
     public Optional<Utilisateur> getUtilisateurById(Long id_utilisateur){return utilisateurRepository.findById(id_utilisateur);}
     public Utilisateur editutilisateur(Long id_utilisateur,Utilisateur utilisateur){
@@ -34,5 +53,13 @@ public class UtilisateurService {
     public String deleteUtilisateurById(Long id){
         utilisateurRepository.deleteById(id);
         return "Utilisateur Supprimé";
+    }
+    public Utilisateur connectionUtilisateur(String email, String motDePasse) {
+        Utilisateur user = utilisateurRepository.findByEmailAndMotDePasse(email, motDePasse);
+        if (user == null) {
+            throw new EntityNotFoundException("Cet utilisateur n'existe pas");
+        }
+
+        return user;
     }
 }
