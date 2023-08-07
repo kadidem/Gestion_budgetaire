@@ -30,11 +30,13 @@ public class Utilisateur  {
     @Column(nullable = false, unique = true)
     private String motDePasse;
     @OneToMany(mappedBy = "utilisateur",cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Budget> budgets;
     @OneToMany(mappedBy = "utilisateur",cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Depenses> depenses;
     @OneToMany(mappedBy = "utilisateur",cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Categorie> categories;
 
 }

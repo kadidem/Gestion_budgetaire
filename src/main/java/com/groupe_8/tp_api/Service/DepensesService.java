@@ -43,17 +43,20 @@ public class DepensesService {
             case  "hebdomadaire" :
                 depensesVerif = depensesRepository.findFirstByUtilisateurAndCategorieAndTypeOrderByDateDesc(user,
                         categorie,type);
-                if (depensesVerif.getDate().plusDays(7).isAfter(LocalDate.now()))
-                    throw  new BadRequestException("Desole vous avez deja effectué votre depenses hebdomadaire de " +categorie.getTitre());
+                if (depensesVerif != null){
+                    if (depensesVerif.getDate().plusDays(7).isAfter(LocalDate.now()))
+                        throw  new BadRequestException("Desole vous avez deja effectué votre depenses hebdomadaire de " +categorie.getTitre());
 
+                }
                 budgetService.updateMontantRestant(depenses);
                 break;
             case "mensuelle" :
                 depensesVerif = depensesRepository.findFirstByUtilisateurAndCategorieAndTypeOrderByDateDesc(user,
                         categorie,type);
-                if (depensesVerif.getDate().plusDays(30).isAfter(LocalDate.now()))
-                    throw  new BadRequestException("Desole vous avez deja effectué votre depenses mensuelle de " +categorie.getTitre());
-
+                if (depensesVerif != null){
+                    if (depensesVerif.getDate().plusDays(30).isAfter(LocalDate.now()))
+                        throw  new BadRequestException("Desole vous avez deja effectué votre depenses mensuelle de " +categorie.getTitre());
+                }
                 budgetService.updateMontantRestant(depenses);
                 break;
             default:
@@ -74,7 +77,7 @@ public class DepensesService {
                 .map(qu ->{
                     qu.setDescription(depenses.getDescription());
                     qu.setMontant(depenses.getMontant());
-                    qu.setDate(LocalDate.now());
+                    qu.setDate(depenses.getDate());
                     return depensesRepository.save(qu);
                 }).orElseThrow(() -> new RuntimeException(("Dépenses non trouvé")));
     }

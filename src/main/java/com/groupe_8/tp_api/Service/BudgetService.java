@@ -151,11 +151,10 @@ public class BudgetService {
             throw new BadRequestException("Desolé le montant de votre depense depasse le montant restant de votre budget");
 
         int montantRestantBudgetActuel = montantRestantBudget - montantDepense;
-
+        budget.setMontantRestant(montantRestantBudgetActuel);
         if (montantRestantBudgetActuel <= budget.getMontantAlerte())
             notificationService.sendNotification(budget);
 
-        budget.setMontantRestant(montantRestantBudgetActuel);
         budgetRepository.save(budget);
 
 
