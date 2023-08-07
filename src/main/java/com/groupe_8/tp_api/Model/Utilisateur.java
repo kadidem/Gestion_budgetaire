@@ -34,5 +34,7 @@ public class Utilisateur  {
     @OneToMany(mappedBy = "utilisateur",cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Depenses> depenses;
+    @OneToMany(mappedBy = "utilisateur",cascade = CascadeType.ALL)
+    private List<Categorie> categories;
 
 }
