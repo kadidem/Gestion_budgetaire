@@ -11,4 +11,5 @@ import java.time.LocalDate;
 public interface DepensesRepository extends JpaRepository<Depenses,Long> {
     Depenses findByUtilisateurAndCategorieAndTypeAndDate(Utilisateur utilisateur, Categorie categorie, Type type, LocalDate date);
     Depenses findFirstByUtilisateurAndCategorieAndTypeOrderByDateDesc(Utilisateur utilisateur, Categorie categorie, Type type);
+    Depenses findByIdDepenses(long id);
 }

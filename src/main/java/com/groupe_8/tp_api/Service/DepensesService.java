@@ -5,6 +5,7 @@ import com.groupe_8.tp_api.Exception.NoContentException;
 import com.groupe_8.tp_api.Model.*;
 import com.groupe_8.tp_api.Repository.BudgetRepository;
 import com.groupe_8.tp_api.Repository.DepensesRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,10 @@ public class DepensesService {
         if (user == null)
             throw new BadRequestException("User invalid");
 
+
         Budget budget = budgetRepository.findByUtilisateurAndCategorieAndDateFinIsAfter(user,categorie,LocalDate.now());
+        if (budget == null)
+            throw  new EntityNotFoundException("Vous n'avez aucun budget pour ce categorie de depenses");
         if(dateDepenses.isBefore(budget.getDateDebut()) || dateDepenses.isAfter(LocalDate.now()))
             throw new BadRequestException("Entrez une date correcte");
 
@@ -78,14 +82,13 @@ public class DepensesService {
         return depensesList;
 
     }
-    public Depenses modifier(long id, Depenses depenses){
-        return depensesRepository.findById(id)
-                .map(qu ->{
-                    qu.setDescription(depenses.getDescription());
-                    qu.setMontant(depenses.getMontant());
-                    qu.setDate(depenses.getDate());
-                    return depensesRepository.save(qu);
-                }).orElseThrow(() -> new RuntimeException(("Dépenses non trouvé")));
+    public Depenses modifier(Depenses depenses){
+         Depenses depensesVerif = depensesRepository.findByIdDepenses(depenses.getIdDepenses());
+         if (depensesVerif == null)
+             throw  new EntityNotFoundException("cette depenses n'existe pas");
+         if (!depensesVerif.getDate().equals(depenses.getDate()))
+             throw new EntityNotFoundException("Vous ne pouvez pas changer la date lors de la modification");
+        return depensesRepository.save(depenses);
     }
     public String Supprimer(long id){
         depensesRepository.deleteById(id);
