@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDate;
 
 public interface DepensesRepository extends JpaRepository<Depenses,Long> {
-    Depenses findByUtilisateurAndTypeAndDate(Utilisateur utilisateur, Type type, LocalDate date);
+    Depenses findByUtilisateurAndCategorieAndTypeAndDate(Utilisateur utilisateur, Categorie categorie, Type type, LocalDate date);
     Depenses findFirstByUtilisateurAndCategorieAndTypeOrderByDateDesc(Utilisateur utilisateur, Categorie categorie, Type type);
 }

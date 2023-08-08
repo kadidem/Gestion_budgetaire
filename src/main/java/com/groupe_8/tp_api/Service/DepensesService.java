@@ -28,15 +28,21 @@ public class DepensesService {
         Utilisateur user = depenses.getUtilisateur();
         Type type = depenses.getType();
         Depenses depensesVerif = null;
+        if(categorie == null)
+            throw new BadRequestException("Desolé cet catégorie n'existe pas");
+
+        if (user == null)
+            throw new BadRequestException("User invalid");
+
         Budget budget = budgetRepository.findByUtilisateurAndCategorieAndDateFinIsAfter(user,categorie,LocalDate.now());
         if(dateDepenses.isBefore(budget.getDateDebut()) || dateDepenses.isAfter(LocalDate.now()))
             throw new BadRequestException("Entrez une date correcte");
 
         switch (type.getTitre()){
             case "quotidient" :
-                depensesVerif = depensesRepository.findByUtilisateurAndTypeAndDate(user,type,dateDepenses);
+                depensesVerif = depensesRepository.findByUtilisateurAndCategorieAndTypeAndDate(user,categorie,type,dateDepenses);
                 if (depensesVerif != null)
-                    throw  new BadRequestException("Desole vous avez deja effectué votre depenses journilière de " +categorie.getTitre());
+                    throw  new BadRequestException("Desole vous avez deja effectué votre depenses journalière de " +categorie.getTitre());
 
                 budgetService.updateMontantRestant(depenses);
                 break;

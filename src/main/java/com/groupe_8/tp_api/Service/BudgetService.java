@@ -32,7 +32,7 @@ public class BudgetService {
         LocalDate toDay = LocalDate.now(); // Obtention de la date du jour en type LocalDate
         LocalDate dateDebut = budget.getDateDebut(); // Capture de la date de début du buget à inserer
         LocalDate dateFin ; // Déclaration du variable de type LocalDate qui vas nous servir de personnaliser la date de fin du budget à inserer
-        int jourMaxDuMois = toDay.with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth(); // Obtention du dernier jour du mois actuel
+        //int jourMaxDuMois = toDay.with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth(); // Obtention du dernier jour du mois actuel
 
         /* Vérification si la date le mois et l'année du date de debut du budget à inserer est différent du mois et de l'année de la date actuelle,
          alors le système lèvera une exception */
@@ -40,14 +40,14 @@ public class BudgetService {
             throw new BadRequestException("Désolé veuillez choisir une date correct ");
 
         /* Vérification si le jour de la date du budget à inserer est eest inferieur ou égale à 0 ou si c'est suppérieur au jour de la date actuelle,
-         alors le système lèvera une exception */
+         alors le système lèvera une exception
         if (dateDebut.getDayOfMonth() <=0 || dateDebut.getDayOfMonth() > jourMaxDuMois)
-            throw new BadRequestException("Désolé veuillez choisir une date dans le mois actuel ");
+            throw new BadRequestException("Désolé veuillez choisir une date dans le mois actuel "); */
 
         // Vérification s'il existe dans la base de donnée un budget en cours de même catégorie que le budget à inserer
         Budget budgetVerif = budgetRepository.findByUtilisateurAndCategorieAndDateFinIsAfter(utilisateur,categorie, LocalDate.now());
 
-        /* Si le budgetVerif est différent de null, ce qui veut dire qu'il existe un budget en coursde même catégorie que le budget à inserer
+        /* Si le budgetVerif est différent de null, ce qui veut dire qu'il existe un budget en cours de même catégorie que le budget à inserer
         * , alors le système lèvera une exception */
         if (budgetVerif != null)
             throw new BadRequestException("Désolé vous avez déjà un budget en cours pour cette catégorie");
@@ -82,11 +82,14 @@ public class BudgetService {
 
         // Si budgetVerif est null, alors le budget n'a pas étét trouvé et le système lèvera une exception
         if (budgetVerif == null)
-            throw new EntityNotFoundException("Désolé cet budget n'exis");
+            throw new EntityNotFoundException("Désolé cet budget n'existe pas");
 
         /* Verification si la date de debut du budgetVerif est different de la date du budget à modifier, alors le système lèvera une exception */
         if(!budgetVerif.getDateDebut().equals(budget.getDateDebut()))
             throw new BadRequestException("Vous ne pouvez pas modifier la date de debut du budget");
+
+        if(!budgetVerif.getDateFin().equals(budget.getDateFin()))
+            throw new BadRequestException("Vous ne pouvez pas modifier la date de fin du budget");
 
         /* Dans le cas contraire on sauvegarde la modification du budget dans la base de donnée
         et retourne le budget modifié
