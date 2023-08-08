@@ -22,7 +22,7 @@ public class Categorie {
     private String titre;
 
     @ManyToOne
-    //@JsonIgnoreProperties(value = {})
+
     @JoinColumn(name = "idUtilisateur")
     private Utilisateur utilisateur;
 

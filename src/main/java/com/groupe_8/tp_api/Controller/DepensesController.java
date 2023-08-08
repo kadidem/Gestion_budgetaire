@@ -19,7 +19,7 @@ public class DepensesController {
     public Depenses create(@RequestBody Depenses depenses){
         return depensesService.creer(depenses);
     }
-    @PostMapping("/update/{id}")
+    @PutMapping("/update/{id}")
     public  Depenses update(@PathVariable long id,@RequestBody Depenses depenses){
       return depensesService.modifier(id, depenses);
     }

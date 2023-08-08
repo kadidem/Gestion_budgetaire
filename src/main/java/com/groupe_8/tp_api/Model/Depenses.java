@@ -1,5 +1,7 @@
 package com.groupe_8.tp_api.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -27,12 +29,13 @@ public class Depenses {
     @Column(nullable = false)
     private LocalDate date;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne
     private Utilisateur utilisateur;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne
+    @JsonIgnoreProperties("Depenses")
     private  Categorie categorie;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne
     private  Type type;
 }

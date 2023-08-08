@@ -3,6 +3,7 @@ package com.groupe_8.tp_api.Controller;
 import com.groupe_8.tp_api.Model.Type;
 import com.groupe_8.tp_api.Service.TypeService;
 import lombok.AllArgsConstructor;
+import org.springframework.boot.autoconfigure.data.RepositoryType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -39,11 +40,11 @@ public class TypeController {
         typeService.lire();
         return typeService.lire();
     }
-    @PutMapping("/modifier/{idType}")
-    public ResponseEntity<String> modifier(@PathVariable Long idType, @RequestBody Type type) {
-        Type typeAModifier = typeService.modifier(idType, type);
+    @PutMapping("/modifier")
+    public ResponseEntity<String> modifier( @RequestBody Type type) {
+        Type typeAModifier = typeService.modifier(type);
         if (typeAModifier != null) {
-            return ResponseEntity.ok("Le Type avec l'ID " + idType + " a été modifié.");
+            return ResponseEntity.ok("Le Type avec l'ID " + type.getIdType() + " a été modifié.");
         } else {
             return ResponseEntity.notFound().build();
         }
