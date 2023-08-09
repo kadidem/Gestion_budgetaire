@@ -21,7 +21,7 @@ public class DepensesController {
     }
     @PutMapping("/update/{id}")
     public  Depenses update(@PathVariable long id,@RequestBody Depenses depenses){
-      return depensesService.modifier(id, depenses);
+      return depensesService.modifier(depenses);
     }
   @GetMapping("/read")
     public List<Depenses> read(){

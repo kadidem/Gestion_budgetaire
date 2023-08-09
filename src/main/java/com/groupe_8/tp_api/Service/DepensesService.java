@@ -4,7 +4,9 @@ import com.groupe_8.tp_api.Exception.BadRequestException;
 import com.groupe_8.tp_api.Exception.NoContentException;
 import com.groupe_8.tp_api.Model.*;
 import com.groupe_8.tp_api.Repository.BudgetRepository;
+import com.groupe_8.tp_api.Repository.CategorieRepository;
 import com.groupe_8.tp_api.Repository.DepensesRepository;
+import com.groupe_8.tp_api.Repository.UtilisateurRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,18 +17,23 @@ import java.util.List;
 
 
 @Service
-@AllArgsConstructor
 public class DepensesService {
+
     @Autowired
     private  DepensesRepository depensesRepository;
     @Autowired
-    private   BudgetRepository budgetRepository;
+    private  BudgetRepository budgetRepository;
+    @Autowired
+    private CategorieRepository categorieRepository;
+    @Autowired
+    private UtilisateurRepository utilisateurRepository;
     @Autowired
     private  BudgetService budgetService;
+
     public Depenses creer(Depenses depenses){
         LocalDate dateDepenses = depenses.getDate();
-        Categorie categorie = depenses.getCategorie();
-        Utilisateur user = depenses.getUtilisateur();
+        Categorie categorie = categorieRepository.findByIdCategorie(depenses.getCategorie().getIdCategorie());
+        Utilisateur user = utilisateurRepository.findByIdUtilisateur(depenses.getUtilisateur().getIdUtilisateur());
         Type type = depenses.getType();
         Depenses depensesVerif = null;
         if(categorie == null)
