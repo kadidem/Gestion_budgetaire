@@ -4,7 +4,10 @@ import com.groupe_8.tp_api.Exception.BadRequestException;
 import com.groupe_8.tp_api.Exception.NoContentException;
 import com.groupe_8.tp_api.Model.*;
 import com.groupe_8.tp_api.Repository.BudgetRepository;
+import com.groupe_8.tp_api.Repository.CategorieRepository;
 import com.groupe_8.tp_api.Repository.DepensesRepository;
+import com.groupe_8.tp_api.Repository.UtilisateurRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,35 +17,51 @@ import java.util.List;
 
 
 @Service
-@AllArgsConstructor
 public class DepensesService {
+
     @Autowired
     private  DepensesRepository depensesRepository;
     @Autowired
-    private   BudgetRepository budgetRepository;
+    private  BudgetRepository budgetRepository;
+    @Autowired
+    private CategorieRepository categorieRepository;
+    @Autowired
+    private UtilisateurRepository utilisateurRepository;
     @Autowired
     private  BudgetService budgetService;
+
     public Depenses creer(Depenses depenses){
         LocalDate dateDepenses = depenses.getDate();
-        Categorie categorie = depenses.getCategorie();
-        Utilisateur user = depenses.getUtilisateur();
+        Budget budget = budgetRepository.findByIdBudget(depenses.getBudget().getIdBudget());
+        if (budget == null)
+            throw  new EntityNotFoundException("Vous n'avez aucun budget pour ce categorie de depenses");
+        if (budget.getDateFin().isBefore(LocalDate.now()))
+            throw new BadRequestException("ce budjet n'est plus valide");
+
+        Categorie categorie = budget.getCategorie();
+        Utilisateur user = utilisateurRepository.findByIdUtilisateur(depenses.getUtilisateur().getIdUtilisateur());
         Type type = depenses.getType();
         Depenses depensesVerif = null;
-        Budget budget = budgetRepository.findByUtilisateurAndCategorieAndDateFinIsAfter(user,categorie,LocalDate.now());
+        if(categorie == null)
+            throw new BadRequestException("Desolé cet catégorie n'existe pas");
+
+        if (user == null)
+            throw new BadRequestException("User invalid");
+
         if(dateDepenses.isBefore(budget.getDateDebut()) || dateDepenses.isAfter(LocalDate.now()))
             throw new BadRequestException("Entrez une date correcte");
 
         switch (type.getTitre()){
             case "quotidient" :
-                depensesVerif = depensesRepository.findByUtilisateurAndTypeAndDate(user,type,dateDepenses);
+                depensesVerif = depensesRepository.findByUtilisateurAndBudgetAndTypeAndDate(user,budget,type,dateDepenses);
                 if (depensesVerif != null)
-                    throw  new BadRequestException("Desole vous avez deja effectué votre depenses journilière de " +categorie.getTitre());
+                    throw  new BadRequestException("Desole vous avez deja effectué votre depenses journalière de " +categorie.getTitre());
 
                 budgetService.updateMontantRestant(depenses);
                 break;
             case  "hebdomadaire" :
-                depensesVerif = depensesRepository.findFirstByUtilisateurAndCategorieAndTypeOrderByDateDesc(user,
-                        categorie,type);
+                depensesVerif = depensesRepository.findFirstByUtilisateurAndBudgetAndTypeOrderByDateDesc(user,
+                        budget,type);
                 if (depensesVerif != null){
                     if (depensesVerif.getDate().plusDays(7).isAfter(LocalDate.now()))
                         throw  new BadRequestException("Desole vous avez deja effectué votre depenses hebdomadaire de " +categorie.getTitre());
@@ -51,8 +70,8 @@ public class DepensesService {
                 budgetService.updateMontantRestant(depenses);
                 break;
             case "mensuelle" :
-                depensesVerif = depensesRepository.findFirstByUtilisateurAndCategorieAndTypeOrderByDateDesc(user,
-                        categorie,type);
+                depensesVerif = depensesRepository.findFirstByUtilisateurAndBudgetAndTypeOrderByDateDesc(user,
+                        budget,type);
                 if (depensesVerif != null){
                     if (depensesVerif.getDate().plusDays(30).isAfter(LocalDate.now()))
                         throw  new BadRequestException("Desole vous avez deja effectué votre depenses mensuelle de " +categorie.getTitre());
@@ -72,17 +91,25 @@ public class DepensesService {
         return depensesList;
 
     }
-    public Depenses modifier(long id, Depenses depenses){
-        return depensesRepository.findById(id)
-                .map(qu ->{
-                    qu.setDescription(depenses.getDescription());
-                    qu.setMontant(depenses.getMontant());
-                    qu.setDate(depenses.getDate());
-                    return depensesRepository.save(qu);
-                }).orElseThrow(() -> new RuntimeException(("Dépenses non trouvé")));
+    public Depenses modifier(Depenses depenses){
+         Depenses depensesVerif = depensesRepository.findByIdDepenses(depenses.getIdDepenses());
+         if (depensesVerif == null)
+             throw  new EntityNotFoundException("cette depenses n'existe pas");
+         if (!depensesVerif.getDate().equals(depenses.getDate()))
+             throw new EntityNotFoundException("Vous ne pouvez pas changer la date lors de la modification");
+        if (depenses.getMontant() != depensesVerif.getMontant())
+            budgetService.updateMontantRestant(depenses,depensesVerif);
+
+        return depensesRepository.save(depenses);
     }
-    public String Supprimer(long id){
-        depensesRepository.deleteById(id);
+    public String Supprimer(Depenses depenses){
+        Depenses depensesVerif = depensesRepository.findByIdDepenses(depenses.getIdDepenses());
+        if (depensesVerif == null)
+            throw  new EntityNotFoundException("cette depenses n'existe pas");
+        budgetService.updateMontantRestant(depenses,"sup");
+
+        depensesRepository.delete(depenses);
+
         return "Depenses Supprimer";
     }
 }

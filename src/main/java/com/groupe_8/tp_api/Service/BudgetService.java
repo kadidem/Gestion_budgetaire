@@ -32,7 +32,7 @@ public class BudgetService {
         LocalDate toDay = LocalDate.now(); // Obtention de la date du jour en type LocalDate
         LocalDate dateDebut = budget.getDateDebut(); // Capture de la date de début du buget à inserer
         LocalDate dateFin ; // Déclaration du variable de type LocalDate qui vas nous servir de personnaliser la date de fin du budget à inserer
-        int jourMaxDuMois = toDay.with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth(); // Obtention du dernier jour du mois actuel
+        //int jourMaxDuMois = toDay.with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth(); // Obtention du dernier jour du mois actuel
 
         /* Vérification si la date le mois et l'année du date de debut du budget à inserer est différent du mois et de l'année de la date actuelle,
          alors le système lèvera une exception */
@@ -40,14 +40,14 @@ public class BudgetService {
             throw new BadRequestException("Désolé veuillez choisir une date correct ");
 
         /* Vérification si le jour de la date du budget à inserer est eest inferieur ou égale à 0 ou si c'est suppérieur au jour de la date actuelle,
-         alors le système lèvera une exception */
+         alors le système lèvera une exception
         if (dateDebut.getDayOfMonth() <=0 || dateDebut.getDayOfMonth() > jourMaxDuMois)
-            throw new BadRequestException("Désolé veuillez choisir une date dans le mois actuel ");
+            throw new BadRequestException("Désolé veuillez choisir une date dans le mois actuel "); */
 
         // Vérification s'il existe dans la base de donnée un budget en cours de même catégorie que le budget à inserer
         Budget budgetVerif = budgetRepository.findByUtilisateurAndCategorieAndDateFinIsAfter(utilisateur,categorie, LocalDate.now());
 
-        /* Si le budgetVerif est différent de null, ce qui veut dire qu'il existe un budget en coursde même catégorie que le budget à inserer
+        /* Si le budgetVerif est différent de null, ce qui veut dire qu'il existe un budget en cours de même catégorie que le budget à inserer
         * , alors le système lèvera une exception */
         if (budgetVerif != null)
             throw new BadRequestException("Désolé vous avez déjà un budget en cours pour cette catégorie");
@@ -82,11 +82,14 @@ public class BudgetService {
 
         // Si budgetVerif est null, alors le budget n'a pas étét trouvé et le système lèvera une exception
         if (budgetVerif == null)
-            throw new EntityNotFoundException("Désolé cet budget n'exis");
+            throw new EntityNotFoundException("Désolé cet budget n'existe pas");
 
         /* Verification si la date de debut du budgetVerif est different de la date du budget à modifier, alors le système lèvera une exception */
         if(!budgetVerif.getDateDebut().equals(budget.getDateDebut()))
             throw new BadRequestException("Vous ne pouvez pas modifier la date de debut du budget");
+
+        if(!budgetVerif.getDateFin().equals(budget.getDateFin()))
+            throw new BadRequestException("Vous ne pouvez pas modifier la date de fin du budget");
 
         /* Dans le cas contraire on sauvegarde la modification du budget dans la base de donnée
         et retourne le budget modifié
@@ -137,13 +140,31 @@ public class BudgetService {
         return "succes";
     }
 
-    public void updateMontantRestant(Depenses depenses){
-        Utilisateur utilisateur = depenses.getUtilisateur(); // Recuperer l'utilisateur de la dépense
-        Categorie categorie = depenses.getCategorie(); // Recuperer categorie de la depense
-        int montantDepense = depenses.getMontant(); // Recupere montant de la depense
+    public void updateMontantRestant(Depenses depenses, Object... depensesMotif){
+        //int defaultMontant = depenses.getMontant();
+        int montantDepense = 0;
 
         // Recuperer le budget en cours de la même catégorie de depense
-        Budget budget = budgetRepository.findByUtilisateurAndCategorieAndDateFinIsAfter(utilisateur,categorie,LocalDate.now());
+        Budget budget = budgetRepository.findByIdBudget(depenses.getBudget().getIdBudget());
+        if (budget == null)
+            throw  new EntityNotFoundException("Vous n'avez aucun budget pour ce categorie de depenses");
+        if (budget.getDateFin().isBefore(LocalDate.now()))
+            throw new BadRequestException("ce budjet n'est plus valide");
+
+        if(depensesMotif[0]!=null){
+            if (depensesMotif[0] instanceof Depenses){
+                Depenses depensesVerif = (Depenses) depensesMotif[0];
+                if (depenses.getMontant() != depensesVerif.getMontant()){
+                    montantDepense = depenses.getMontant()-depensesVerif.getMontant();
+                }
+            } else {
+                String motif = (String) depensesMotif[0];
+                if (!motif.equals("sup"))
+                    throw  new BadRequestException("Motif incorrect");
+                montantDepense = -depenses.getMontant();
+            }
+        } else
+            montantDepense = depenses.getMontant(); // Recupere montant de la depense
 
         int montantRestantBudget = budget.getMontantRestant();
 
@@ -159,4 +180,5 @@ public class BudgetService {
 
 
     }
+
 }
