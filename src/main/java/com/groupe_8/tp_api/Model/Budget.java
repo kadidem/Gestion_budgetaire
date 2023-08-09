@@ -45,7 +45,6 @@ public class Budget {
 
     @NotNull
     @ManyToOne
-    @JsonIgnoreProperties(value = {"budgets","depenses"})
     private Utilisateur utilisateur;
 
     @NotNull
