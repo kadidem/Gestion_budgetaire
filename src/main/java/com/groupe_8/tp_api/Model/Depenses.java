@@ -33,8 +33,8 @@ public class Depenses {
     private Utilisateur utilisateur;
 
     @ManyToOne
-    @JsonIgnoreProperties("Depenses")
-    private  Categorie categorie;
+    @JsonIgnoreProperties("depenses")
+    private  Budget budget;
 
     @ManyToOne
     private  Type type;

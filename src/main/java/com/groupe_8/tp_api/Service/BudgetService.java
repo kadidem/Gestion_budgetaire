@@ -140,13 +140,31 @@ public class BudgetService {
         return "succes";
     }
 
-    public void updateMontantRestant(Depenses depenses){
-        Utilisateur utilisateur = depenses.getUtilisateur(); // Recuperer l'utilisateur de la dépense
-        Categorie categorie = depenses.getCategorie(); // Recuperer categorie de la depense
-        int montantDepense = depenses.getMontant(); // Recupere montant de la depense
+    public void updateMontantRestant(Depenses depenses, Object... depensesMotif){
+        //int defaultMontant = depenses.getMontant();
+        int montantDepense = 0;
 
         // Recuperer le budget en cours de la même catégorie de depense
-        Budget budget = budgetRepository.findByUtilisateurAndCategorieAndDateFinIsAfter(utilisateur,categorie,LocalDate.now());
+        Budget budget = budgetRepository.findByIdBudget(depenses.getBudget().getIdBudget());
+        if (budget == null)
+            throw  new EntityNotFoundException("Vous n'avez aucun budget pour ce categorie de depenses");
+        if (budget.getDateFin().isBefore(LocalDate.now()))
+            throw new BadRequestException("ce budjet n'est plus valide");
+
+        if(depensesMotif[0]!=null){
+            if (depensesMotif[0] instanceof Depenses){
+                Depenses depensesVerif = (Depenses) depensesMotif[0];
+                if (depenses.getMontant() != depensesVerif.getMontant()){
+                    montantDepense = depenses.getMontant()-depensesVerif.getMontant();
+                }
+            } else {
+                String motif = (String) depensesMotif[0];
+                if (!motif.equals("sup"))
+                    throw  new BadRequestException("Motif incorrect");
+                montantDepense = -depenses.getMontant();
+            }
+        } else
+            montantDepense = depenses.getMontant(); // Recupere montant de la depense
 
         int montantRestantBudget = budget.getMontantRestant();
 
@@ -162,4 +180,5 @@ public class BudgetService {
 
 
     }
+
 }

@@ -9,6 +9,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -51,5 +52,8 @@ public class Budget {
     @ManyToOne
     @JsonIgnoreProperties(value = {"budgets","utilisateur"})
     private Categorie categorie;
+
+    @OneToMany(mappedBy="budget")
+    private List<Depenses> depenses;
 
 }

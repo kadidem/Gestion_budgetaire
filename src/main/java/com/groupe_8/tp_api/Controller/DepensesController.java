@@ -19,16 +19,16 @@ public class DepensesController {
     public Depenses create(@RequestBody Depenses depenses){
         return depensesService.creer(depenses);
     }
-    @PutMapping("/update/{id}")
-    public  Depenses update(@PathVariable long id,@RequestBody Depenses depenses){
+    @PutMapping("/update")
+    public  Depenses update(@RequestBody Depenses depenses){
       return depensesService.modifier(depenses);
     }
   @GetMapping("/read")
     public List<Depenses> read(){
        return depensesService.lire();
     }
-  @DeleteMapping("delete/{id}")
-   public  String delete(@PathVariable long id){
-       return depensesService.Supprimer(id);
+  @DeleteMapping("/delete")
+   public  String delete(@RequestBody Depenses depenses){
+       return depensesService.Supprimer(depenses);
     }
 }

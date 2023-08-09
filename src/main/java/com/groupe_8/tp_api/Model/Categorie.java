@@ -26,9 +26,6 @@ public class Categorie {
     @JoinColumn(name = "idUtilisateur")
     private Utilisateur utilisateur;
 
-    @OneToMany(mappedBy="categorie")
-    private List<Depenses> depenses;
-
     @OneToMany(mappedBy = "categorie")
     private List<Budget> budgets;
 }

@@ -32,7 +32,13 @@ public class DepensesService {
 
     public Depenses creer(Depenses depenses){
         LocalDate dateDepenses = depenses.getDate();
-        Categorie categorie = categorieRepository.findByIdCategorie(depenses.getCategorie().getIdCategorie());
+        Budget budget = budgetRepository.findByIdBudget(depenses.getBudget().getIdBudget());
+        if (budget == null)
+            throw  new EntityNotFoundException("Vous n'avez aucun budget pour ce categorie de depenses");
+        if (budget.getDateFin().isBefore(LocalDate.now()))
+            throw new BadRequestException("ce budjet n'est plus valide");
+
+        Categorie categorie = budget.getCategorie();
         Utilisateur user = utilisateurRepository.findByIdUtilisateur(depenses.getUtilisateur().getIdUtilisateur());
         Type type = depenses.getType();
         Depenses depensesVerif = null;
@@ -42,24 +48,20 @@ public class DepensesService {
         if (user == null)
             throw new BadRequestException("User invalid");
 
-
-        Budget budget = budgetRepository.findByUtilisateurAndCategorieAndDateFinIsAfter(user,categorie,LocalDate.now());
-        if (budget == null)
-            throw  new EntityNotFoundException("Vous n'avez aucun budget pour ce categorie de depenses");
         if(dateDepenses.isBefore(budget.getDateDebut()) || dateDepenses.isAfter(LocalDate.now()))
             throw new BadRequestException("Entrez une date correcte");
 
         switch (type.getTitre()){
             case "quotidient" :
-                depensesVerif = depensesRepository.findByUtilisateurAndCategorieAndTypeAndDate(user,categorie,type,dateDepenses);
+                depensesVerif = depensesRepository.findByUtilisateurAndBudgetAndTypeAndDate(user,budget,type,dateDepenses);
                 if (depensesVerif != null)
                     throw  new BadRequestException("Desole vous avez deja effectué votre depenses journalière de " +categorie.getTitre());
 
                 budgetService.updateMontantRestant(depenses);
                 break;
             case  "hebdomadaire" :
-                depensesVerif = depensesRepository.findFirstByUtilisateurAndCategorieAndTypeOrderByDateDesc(user,
-                        categorie,type);
+                depensesVerif = depensesRepository.findFirstByUtilisateurAndBudgetAndTypeOrderByDateDesc(user,
+                        budget,type);
                 if (depensesVerif != null){
                     if (depensesVerif.getDate().plusDays(7).isAfter(LocalDate.now()))
                         throw  new BadRequestException("Desole vous avez deja effectué votre depenses hebdomadaire de " +categorie.getTitre());
@@ -68,8 +70,8 @@ public class DepensesService {
                 budgetService.updateMontantRestant(depenses);
                 break;
             case "mensuelle" :
-                depensesVerif = depensesRepository.findFirstByUtilisateurAndCategorieAndTypeOrderByDateDesc(user,
-                        categorie,type);
+                depensesVerif = depensesRepository.findFirstByUtilisateurAndBudgetAndTypeOrderByDateDesc(user,
+                        budget,type);
                 if (depensesVerif != null){
                     if (depensesVerif.getDate().plusDays(30).isAfter(LocalDate.now()))
                         throw  new BadRequestException("Desole vous avez deja effectué votre depenses mensuelle de " +categorie.getTitre());
@@ -95,10 +97,19 @@ public class DepensesService {
              throw  new EntityNotFoundException("cette depenses n'existe pas");
          if (!depensesVerif.getDate().equals(depenses.getDate()))
              throw new EntityNotFoundException("Vous ne pouvez pas changer la date lors de la modification");
+        if (depenses.getMontant() != depensesVerif.getMontant())
+            budgetService.updateMontantRestant(depenses,depensesVerif);
+
         return depensesRepository.save(depenses);
     }
-    public String Supprimer(long id){
-        depensesRepository.deleteById(id);
+    public String Supprimer(Depenses depenses){
+        Depenses depensesVerif = depensesRepository.findByIdDepenses(depenses.getIdDepenses());
+        if (depensesVerif == null)
+            throw  new EntityNotFoundException("cette depenses n'existe pas");
+        budgetService.updateMontantRestant(depenses,"sup");
+
+        depensesRepository.delete(depenses);
+
         return "Depenses Supprimer";
     }
 }
