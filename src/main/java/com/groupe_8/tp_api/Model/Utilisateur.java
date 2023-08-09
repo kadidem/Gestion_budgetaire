@@ -9,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -29,14 +30,9 @@ public class Utilisateur  {
     private String email;
     @Column(nullable = false, unique = true)
     private String motDePasse;
+
     @OneToMany(mappedBy = "utilisateur",cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<Budget> budgets;
-    @OneToMany(mappedBy = "utilisateur",cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Depenses> depenses;
-    @OneToMany(mappedBy = "utilisateur",cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Categorie> categories;
+    private List<Categorie> categories = new ArrayList<>();
 
 }
