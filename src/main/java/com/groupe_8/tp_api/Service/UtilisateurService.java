@@ -38,20 +38,23 @@ public class UtilisateurService  {
         } else {
             throw new EntityExistsException("Cet email existe déjà");}}
    public List<Utilisateur> getAllUtilisateur(){return utilisateurRepository.findAll();}
-    public Optional<Utilisateur> getUtilisateurById(Long id_utilisateur){return utilisateurRepository.findById(id_utilisateur);}
-    public Utilisateur editutilisateur(Long id_utilisateur,Utilisateur utilisateur){
-        Utilisateur user= utilisateurRepository.findById(id_utilisateur)
+    public Optional<Utilisateur> getUtilisateurById(Long idUtilisateur){return utilisateurRepository.findById(idUtilisateur);}
+    public Utilisateur editutilisateur(Long idUtilisateur,Utilisateur utilisateur){
+        Utilisateur user= utilisateurRepository.findById(idUtilisateur)
                 .map(u ->{
                     u.setNom(utilisateur.getNom());
                     u.setPrenom((utilisateur.getPrenom()));
                     u.setEmail((utilisateur.getEmail()));
                     u.setMotDePasse((utilisateur.getMotDePasse()));
                     return utilisateurRepository.save(u);
-                }).orElseThrow(() -> new RuntimeException("l'utilisateur n'a pas été trouvé"));
+                }).orElseThrow(() -> new EntityNotFoundException("Désolé l'utilisateur à modifier n'existe pas"));
+
         return user;
     }
-    public String deleteUtilisateurById(Long id){
-        utilisateurRepository.deleteById(id);
+    public String deleteUtilisateurById(Long idUtilisateur){
+        if (idUtilisateur == null)
+            throw new EntityNotFoundException("Désolé  l'utilisateur à supprimé n'existe pas");
+        utilisateurRepository.deleteById(idUtilisateur);
         return "Utilisateur Supprimé";
     }
     public Utilisateur connectionUtilisateur(String email, String motDePasse) {
