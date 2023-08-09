@@ -1,5 +1,6 @@
 package com.groupe_8.tp_api.Service;
 
+import com.groupe_8.tp_api.Exception.NoContentException;
 import com.groupe_8.tp_api.Model.Utilisateur;
 import com.groupe_8.tp_api.Repository.UtilisateurRepository;
 import jakarta.persistence.EntityExistsException;
@@ -37,21 +38,33 @@ public class UtilisateurService  {
             return utilisateurRepository.save(utilisateur);
         } else {
             throw new EntityExistsException("Cet email existe déjà");}}
-   public List<Utilisateur> getAllUtilisateur(){return utilisateurRepository.findAll();}
-    public Optional<Utilisateur> getUtilisateurById(Long id_utilisateur){return utilisateurRepository.findById(id_utilisateur);}
-    public Utilisateur editutilisateur(Long id_utilisateur,Utilisateur utilisateur){
-        Utilisateur user= utilisateurRepository.findById(id_utilisateur)
-                .map(u ->{
-                    u.setNom(utilisateur.getNom());
-                    u.setPrenom((utilisateur.getPrenom()));
-                    u.setEmail((utilisateur.getEmail()));
-                    u.setMotDePasse((utilisateur.getMotDePasse()));
-                    return utilisateurRepository.save(u);
-                }).orElseThrow(() -> new RuntimeException("l'utilisateur n'a pas été trouvé"));
-        return user;
+   public List<Utilisateur> getAllUtilisateur(){
+
+        List<Utilisateur> utilisateurs = utilisateurRepository.findAll();
+        if (utilisateurs.isEmpty())
+            throw new NoContentException("Aucun utilisateur trouvé");
+        return utilisateurs;
     }
-    public String deleteUtilisateurById(Long id){
-        utilisateurRepository.deleteById(id);
+    public Utilisateur getUtilisateurById(long idUtilisateur){
+
+        Utilisateur utilisateur= utilisateurRepository.findByIdUtilisateur(idUtilisateur);
+        if(utilisateur ==null)
+            throw new EntityNotFoundException("cet utilisateur n'existe pas");
+        return utilisateur;
+    }
+
+    public Utilisateur editutilisateur(Utilisateur utilisateur){
+        Utilisateur user= utilisateurRepository.findByIdUtilisateur(utilisateur.getIdUtilisateur());
+         if (user == null)
+             throw new EntityNotFoundException("cet utilisateur n'existe pas");
+         return utilisateurRepository.save(utilisateur);
+
+    }
+    public String deleteUtilisateurById(Utilisateur utilisateur){
+        Utilisateur user= utilisateurRepository.findByIdUtilisateur(utilisateur.getIdUtilisateur());
+        if (user == null)
+            throw new EntityNotFoundException("Désolé  l'utilisateur à supprimé n'existe pas");
+        utilisateurRepository.delete(utilisateur);
         return "Utilisateur Supprimé";
     }
     public Utilisateur connectionUtilisateur(String email, String motDePasse) {
