@@ -2,7 +2,10 @@ package com.groupe_8.tp_api.Controller;
 
 import com.groupe_8.tp_api.Model.Utilisateur;
 import com.groupe_8.tp_api.Service.UtilisateurService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,18 +18,21 @@ public class UtilisateurController {
 
     private final UtilisateurService utilisateurService;
     @PostMapping("/create")
-    public Utilisateur createUtilisateur(@RequestBody Utilisateur utilisateur){
-         return utilisateurService.createUtilisateur(utilisateur);
+    public ResponseEntity<Utilisateur> createUtilisateur(@Valid @RequestBody Utilisateur utilisateur){
+         return new ResponseEntity<>(utilisateurService.createUtilisateur(utilisateur), HttpStatus.OK);
      }
      @GetMapping("/read")
-    public List<Utilisateur> getUtilisateur(){return utilisateurService.getAllUtilisateur();}
+    public ResponseEntity<List<Utilisateur>> getUtilisateur(){
+        return new ResponseEntity<>(utilisateurService.getAllUtilisateur(),HttpStatus.OK);}
    @GetMapping("/read/{id}")
-    public Optional<Utilisateur> getUtilisateurById(@PathVariable Long id){return utilisateurService.getUtilisateurById(id);}
-   @PutMapping("/update/{id}")
-    public Utilisateur editUtilisateur(@PathVariable Long id,@RequestBody Utilisateur utilisateur){return
-            utilisateurService.editutilisateur(id,utilisateur);}
-    @DeleteMapping("/delete/{id}")
-    public String deleteUtilisateurById(@PathVariable Long id){return utilisateurService.deleteUtilisateurById(id);}
+    public ResponseEntity<Utilisateur> getUtilisateurById(@Valid @PathVariable long id){
+        return new ResponseEntity<>(utilisateurService.getUtilisateurById(id),HttpStatus.OK) ;}
+   @PutMapping("/update")
+    public ResponseEntity<Utilisateur>  editUtilisateur(@Valid @RequestBody Utilisateur utilisateur){
+        return new ResponseEntity<>( utilisateurService.editutilisateur(utilisateur),HttpStatus.OK);}
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteUtilisateurById(@Valid @RequestBody Utilisateur utilisateur){
+        return new ResponseEntity<>(utilisateurService.deleteUtilisateurById(utilisateur),HttpStatus.OK);}
     @PostMapping("/login")
     public Object connexion(@RequestParam("email") String email,
                             @RequestParam("motDePasse") String motDePasse) {
