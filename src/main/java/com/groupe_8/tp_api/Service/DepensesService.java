@@ -3,10 +3,7 @@ package com.groupe_8.tp_api.Service;
 import com.groupe_8.tp_api.Exception.BadRequestException;
 import com.groupe_8.tp_api.Exception.NoContentException;
 import com.groupe_8.tp_api.Model.*;
-import com.groupe_8.tp_api.Repository.BudgetRepository;
-import com.groupe_8.tp_api.Repository.CategorieRepository;
-import com.groupe_8.tp_api.Repository.DepensesRepository;
-import com.groupe_8.tp_api.Repository.UtilisateurRepository;
+import com.groupe_8.tp_api.Repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +21,7 @@ public class DepensesService {
     @Autowired
     private  BudgetRepository budgetRepository;
     @Autowired
-    private CategorieRepository categorieRepository;
+    private TypeRepository typeRepository;
     @Autowired
     private UtilisateurRepository utilisateurRepository;
     @Autowired
@@ -36,14 +33,14 @@ public class DepensesService {
         if (budget == null)
             throw  new EntityNotFoundException("Vous n'avez aucun budget pour ce categorie de depenses");
         if (budget.getDateFin().isBefore(LocalDate.now()))
-            throw new BadRequestException("ce budjet n'est plus valide");
+            throw new BadRequestException("ce budget n'est plus valide");
 
         Categorie categorie = budget.getCategorie();
         Utilisateur user = utilisateurRepository.findByIdUtilisateur(depenses.getUtilisateur().getIdUtilisateur());
-        Type type = depenses.getType();
+        Type type = typeRepository.findByIdType(depenses.getType().getIdType());
         Depenses depensesVerif = null;
         if(categorie == null)
-            throw new BadRequestException("Desolé cet catégorie n'existe pas");
+            throw new BadRequestException("Desolé cette catégorie n'existe pas");
 
         if (user == null)
             throw new BadRequestException("User invalid");
