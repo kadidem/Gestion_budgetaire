@@ -2,6 +2,7 @@ package com.groupe_8.tp_api.Controller;
 
 import com.groupe_8.tp_api.Model.Type;
 import com.groupe_8.tp_api.Service.TypeService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.data.RepositoryType;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ public class TypeController {
     private final TypeService typeService;
 
     @PostMapping("/creer")
+    @Operation(summary = "Création  d'un type")
     public ResponseEntity<String> creer(@RequestBody Type type, BindingResult bindingResult) {
         // Valider l'objet Type en utilisant les annotations de validation
         if (bindingResult.hasErrors()) {
@@ -36,11 +38,13 @@ public class TypeController {
         }
     }
     @GetMapping("/lire")
+    @Operation(summary = "Affichage  des types")
     public List<Type> lire() {
         typeService.lire();
         return typeService.lire();
     }
     @PutMapping("/modifier")
+    @Operation(summary = "Modification d'un type")
     public ResponseEntity<String> modifier( @RequestBody Type type) {
         Type typeAModifier = typeService.modifier(type);
         if (typeAModifier != null) {
@@ -50,6 +54,7 @@ public class TypeController {
         }
     }
     @DeleteMapping("/Supprimer")
+    @Operation(summary = "Suppression d'un type")
     public String supprimer(@RequestParam("id") long idType){
         typeService.supprimer(idType);
         return "Vous avez supprimé le type à l'id "+idType;
