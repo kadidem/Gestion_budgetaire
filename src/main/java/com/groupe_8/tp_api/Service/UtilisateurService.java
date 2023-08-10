@@ -38,7 +38,7 @@ public class UtilisateurService  {
             return utilisateurRepository.save(utilisateur);
         } else {
             throw new EntityExistsException("Cet email existe déjà");}}
-   public List<Utilisateur> getAllUtilisateur(){
+    public List<Utilisateur> getAllUtilisateur(){
 
         List<Utilisateur> utilisateurs = utilisateurRepository.findAll();
         if (utilisateurs.isEmpty())
