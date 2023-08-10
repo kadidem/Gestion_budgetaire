@@ -84,12 +84,41 @@ public class BudgetService {
         if (budgetVerif == null)
             throw new EntityNotFoundException("Désolé cet budget n'existe pas");
 
-        /* Verification si la date de debut du budgetVerif est different de la date du budget à modifier, alors le système lèvera une exception */
-        if(!budgetVerif.getDateDebut().equals(budget.getDateDebut()))
-            throw new BadRequestException("Vous ne pouvez pas modifier la date de debut du budget");
+        LocalDate toDay = LocalDate.now(); // Obtention de la date du jour en type LocalDate
+        LocalDate dateDebut = budget.getDateDebut(); // Capture de la date de début du buget à inserer
+        LocalDate dateFin ; // Déclaration du variable de type LocalDate qui vas nous servir de personnaliser la date de fin du budget à inserer
 
-        if(!budgetVerif.getDateFin().equals(budget.getDateFin()))
-            throw new BadRequestException("Vous ne pouvez pas modifier la date de fin du budget");
+        /* Verification si la date de debut du budgetVerif est different de la date du budget à modifier, alors le système lèvera une exception */
+        if(!budgetVerif.getDateDebut().equals(budget.getDateDebut())){
+            /* Verification si le budget à modifier possède déjà une depanse */
+            if (!budgetVerif.getDepenses().isEmpty())
+                throw new BadRequestException("Désolé vous ne pouvez plus effectuer cet budget car possède déjà au moins une depense");
+
+            if (budgetVerif.getDateFin().isBefore(toDay))
+                throw new BadRequestException("Désolé vous ne pouvez pas modifier un budget déjà expirer");
+
+            /* Vérification si la date le mois et l'année du date de debut du budget à inserer est différent du mois et de l'année de la date actuelle,
+            alors le système lèvera une exception */
+            if ((dateDebut.getMonthValue() != toDay.getMonthValue()) || (dateDebut.getYear() != toDay.getYear()))
+                throw new BadRequestException("Désolé veuillez choisir une date correct du mois courrant");
+
+            Budget budgetPrecedant = budgetRepository.findFirstByUtilisateurAndCategorieAndDateFinIsBeforeOrderByDateFinDesc(budgetVerif.getUtilisateur(),
+                    budgetVerif.getCategorie(), LocalDate.now());
+            if (budgetPrecedant != null){
+                if(budget.getDateDebut().isBefore(budgetPrecedant.getDateFin()) || budget.getDateDebut().equals(budgetPrecedant.getDateFin()))
+                    throw new BadRequestException("Désolé votre ne doit pas commencé à une date inféieur à la da te de fin du budget précédant qui est "+budgetPrecedant.getDateFin());
+            }
+
+            dateFin = dateDebut.plusDays(30); // On ajoute 30 jours à la date de debut du budget à inserer, et on l'affecte à la variable dateFin
+            budget.setDateFin(dateFin); // On donne cette date à la date de fin du budget à inserer
+        }
+
+        if (budget.getMontant() < (budgetVerif.getMontant() - budgetVerif.getMontantRestant()))
+            throw new BadRequestException("Desolé vous ne pouvez pas modifier le montant de votre budget ent deçue de "+(budgetVerif.getMontant() - budgetVerif.getMontantRestant()));
+
+        if (budget.getMontant() > (budgetVerif.getMontant() - budgetVerif.getMontantRestant())){
+            budget.setMontantRestant(budget.getMontant() - (budgetVerif.getMontant() - budgetVerif.getMontantRestant()));
+        }
 
         /* Dans le cas contraire on sauvegarde la modification du budget dans la base de donnée
         et retourne le budget modifié
@@ -151,7 +180,7 @@ public class BudgetService {
         if (budget.getDateFin().isBefore(LocalDate.now()))
             throw new BadRequestException("ce budjet n'est plus valide");
 
-        if(depensesMotif[0]!=null){
+        if(depensesMotif.length != 0 ){
             if (depensesMotif[0] instanceof Depenses){
                 Depenses depensesVerif = (Depenses) depensesMotif[0];
                 if (depenses.getMontant() != depensesVerif.getMontant()){

@@ -13,4 +13,5 @@ public interface BudgetRepository extends JpaRepository<Budget,Long> {
     Budget findByCategorie(Categorie categorie);
     Budget findByIdBudget(long id);
     Budget findByUtilisateurAndCategorieAndDateFinIsAfter(Utilisateur utilisateur, Categorie categorie, LocalDate date);
+    Budget findFirstByUtilisateurAndCategorieAndDateFinIsBeforeOrderByDateFinDesc(Utilisateur utilisateur,Categorie categorie,LocalDate localDate);
 }

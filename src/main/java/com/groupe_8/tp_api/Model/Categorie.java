@@ -22,7 +22,6 @@ public class Categorie {
     private String titre;
 
     @ManyToOne
-
     @JoinColumn(name = "idUtilisateur")
     private Utilisateur utilisateur;
 
