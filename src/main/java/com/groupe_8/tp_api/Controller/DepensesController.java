@@ -33,8 +33,8 @@ public class DepensesController {
        return depensesService.lire();
     }
     @GetMapping("/read/{id}")
-    public Depenses readById(@Valid @PathVariable long id){
-       return depensesService.lireById(id);
+    public Depenses getDepenseById(@Valid @PathVariable long id){
+       return depensesService.getDepenseById(id);
     }
   @DeleteMapping("/delete")
    public  String delete(@Valid @RequestBody Depenses depenses){

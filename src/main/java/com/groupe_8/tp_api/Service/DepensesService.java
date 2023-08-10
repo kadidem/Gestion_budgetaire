@@ -88,10 +88,10 @@ public class DepensesService {
         return depensesList;
 
     }
-    public Depenses lireById(long id){
-        Depenses depenses=depensesRepository.findByIdDepenses(id);
-        if (depenses != null)
-            throw  new NoContentException("Cette depense n'existe pas");
+    public Depenses getDepenseById(long idDepenses){
+        Depenses depenses=depensesRepository.findByIdDepenses(idDepenses);
+        if (depenses == null)
+            throw  new EntityNotFoundException("Cette depense n'existe pas");
         return depenses;
     }
     public Depenses modifier(Depenses depenses){
