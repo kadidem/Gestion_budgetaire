@@ -2,6 +2,7 @@ package com.groupe_8.tp_api.Controller;
 
 import com.groupe_8.tp_api.Model.Depenses;
 import com.groupe_8.tp_api.Service.DepensesService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,19 +17,23 @@ public class DepensesController {
     @Autowired
     private DepensesService depensesService;
    @PostMapping("/create")
-    public Depenses create(@RequestBody Depenses depenses){
+    public Depenses create(@Valid @RequestBody Depenses depenses){
         return depensesService.creer(depenses);
     }
     @PutMapping("/update")
-    public  Depenses update(@RequestBody Depenses depenses){
+    public  Depenses update(@Valid @RequestBody Depenses depenses){
       return depensesService.modifier(depenses);
     }
   @GetMapping("/read")
     public List<Depenses> read(){
        return depensesService.lire();
     }
+    @GetMapping("/read/{id}")
+    public Depenses readById(@Valid @PathVariable long id){
+       return depensesService.lireById(id);
+    }
   @DeleteMapping("/delete")
-   public  String delete(@RequestBody Depenses depenses){
+   public  String delete(@Valid @RequestBody Depenses depenses){
        return depensesService.Supprimer(depenses);
     }
 }
