@@ -88,6 +88,12 @@ public class DepensesService {
         return depensesList;
 
     }
+    public Depenses lireById(long id){
+        Depenses depenses=depensesRepository.findByIdDepenses(id);
+        if (depenses != null)
+            throw  new NoContentException("Cette depense n'existe pas");
+        return depenses;
+    }
     public Depenses modifier(Depenses depenses){
          Depenses depensesVerif = depensesRepository.findByIdDepenses(depenses.getIdDepenses());
          if (depensesVerif == null)

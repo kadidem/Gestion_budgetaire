@@ -2,6 +2,7 @@ package com.groupe_8.tp_api.Controller;
 
 import com.groupe_8.tp_api.Model.Depenses;
 import com.groupe_8.tp_api.Service.DepensesService;
+import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 
@@ -18,12 +19,12 @@ public class DepensesController {
     private DepensesService depensesService;
    @PostMapping("/create")
    @Operation(summary = "création de dépense")
-    public Depenses create(@RequestBody Depenses depenses){
+    public Depenses create(@Valid @RequestBody Depenses depenses){
         return depensesService.creer(depenses);
     }
     @PutMapping("/update")
     @Operation(summary = "Modification d'un dépense")
-    public  Depenses update(@RequestBody Depenses depenses){
+    public  Depenses update(@Valid @RequestBody Depenses depenses){
       return depensesService.modifier(depenses);
     }
   @GetMapping("/read")
@@ -31,9 +32,12 @@ public class DepensesController {
     public List<Depenses> read(){
        return depensesService.lire();
     }
+    @GetMapping("/read/{id}")
+    public Depenses readById(@Valid @PathVariable long id){
+       return depensesService.lireById(id);
+    }
   @DeleteMapping("/delete")
-  @Operation(summary = "Suppression d'un dépense")
-   public  String delete(@RequestBody Depenses depenses){
+   public  String delete(@Valid @RequestBody Depenses depenses){
        return depensesService.Supprimer(depenses);
     }
 }
