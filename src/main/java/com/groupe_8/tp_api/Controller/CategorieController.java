@@ -2,6 +2,7 @@ package com.groupe_8.tp_api.Controller;
 
 import com.groupe_8.tp_api.Model.Categorie;
 import com.groupe_8.tp_api.Service.CategorieService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,16 +16,19 @@ import java.util.List;
 public class CategorieController {
     private final CategorieService categorieService;
     @GetMapping("/creer")
+    @Operation(summary = "création d'une categorie")
       public String creer(@RequestBody Categorie categorie){
          categorieService.creer(categorie);
          return "La categorie "+ categorie.getTitre() +" a été créée";
     }
     @GetMapping("/lire")
+    @Operation(summary = "affichage des categories")
     public List<Categorie> lire(){
         return categorieService.lire();
     }
 
     @PutMapping("/modifier")
+    @Operation(summary = "Modification d'un categorie")
     public ResponseEntity<Object> modifier(@RequestBody Categorie categorie)
 
     {
@@ -37,6 +41,7 @@ public class CategorieController {
        // return categorieModifiee+" a été remplacée par l'ancienne";
     }
     @DeleteMapping("/Supprimer")
+    @Operation(summary = "suppression  d'un categorie")
       public String supprimer(@RequestParam("id") long idCategorie){
        categorieService.supprimer(idCategorie);
        return "Vous avez supprimé la categorie à l'id "+idCategorie;

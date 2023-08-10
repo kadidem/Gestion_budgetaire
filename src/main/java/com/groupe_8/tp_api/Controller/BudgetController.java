@@ -5,6 +5,7 @@ import com.groupe_8.tp_api.Model.Categorie;
 import com.groupe_8.tp_api.Model.Utilisateur;
 import com.groupe_8.tp_api.Repository.BudgetRepository;
 import com.groupe_8.tp_api.Service.BudgetService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,26 +26,31 @@ public class BudgetController {
     BudgetRepository budgetRepository;
 
     @PostMapping("/ajouter")
+    @Operation(summary = "Creation d'un budget")
     public ResponseEntity<Budget> ajouterBudget(@Valid @RequestBody Budget budget){
         return new ResponseEntity<>(budgetService.createBudget(budget), HttpStatus.OK);
     }
 
     @PutMapping("/modifier")
+    @Operation(summary = "Modification d'un  d'un budget")
     public ResponseEntity<Budget> modifierBudget(@Valid @RequestBody Budget budget){
         return  new ResponseEntity<>(budgetService.updateBudget(budget), HttpStatus.OK);
     }
 
     @GetMapping("/list")
+    @Operation(summary = "Affichage la liste  des budgets")
     public ResponseEntity<List<Budget>> listeBudget(){
         return  new ResponseEntity<>(budgetService.allBudget(),HttpStatus.OK);
     }
 
     @GetMapping("{id}")
+    @Operation(summary = "Affichage un  budget")
     public  ResponseEntity<Budget> budgetParId(@PathVariable long id){
         return new ResponseEntity<>(budgetService.getBudgetById(id),HttpStatus.OK);
     }
 
     @DeleteMapping("/supprimer")
+    @Operation(summary = "suppression d'un  budget")
     public ResponseEntity<String> supprimerBudget(@Valid @RequestBody Budget budget){
         return new ResponseEntity<>(budgetService.deleteBudget(budget),HttpStatus.OK);
     }
