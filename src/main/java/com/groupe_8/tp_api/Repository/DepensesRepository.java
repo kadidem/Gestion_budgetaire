@@ -8,7 +8,8 @@ import java.time.LocalDate;
 
 @Repository
 public interface DepensesRepository extends JpaRepository<Depenses,Long> {
-    Depenses findByUtilisateurAndBudgetAndTypeAndDate(Utilisateur utilisateur, Budget budget, Type type, LocalDate date);
-    Depenses findFirstByUtilisateurAndBudgetAndTypeOrderByDateDesc(Utilisateur utilisateur, Budget budget, Type type);
+    Depenses findByUtilisateurAndBudgetAndTypeAndDescriptionAndDate(Utilisateur utilisateur, Budget budget, Type type, String desc, LocalDate date);
+    Depenses findFirstByUtilisateurAndBudgetAndTypeAndDescriptionOrderByDateDesc(Utilisateur utilisateur, Budget budget, Type type,String desc);
     Depenses findByIdDepenses(long id);
+    Depenses findFirstByBudget(Budget budget);
 }

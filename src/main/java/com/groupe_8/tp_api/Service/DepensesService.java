@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 
@@ -26,6 +27,8 @@ public class DepensesService {
     private UtilisateurRepository utilisateurRepository;
     @Autowired
     private  BudgetService budgetService;
+    @Autowired
+    private TransfertRepository transfertRepository;
 
     public Depenses creer(Depenses depenses){
         LocalDate dateDepenses = depenses.getDate();
@@ -49,28 +52,30 @@ public class DepensesService {
             throw new BadRequestException("Entrez une date correcte");
 
         switch (type.getTitre()){
-            case "quotidient" :
-                depensesVerif = depensesRepository.findByUtilisateurAndBudgetAndTypeAndDate(user,budget,type,dateDepenses);
+            case "quotidien" :
+                depensesVerif = depensesRepository.findByUtilisateurAndBudgetAndTypeAndDescriptionAndDate(user,budget,type,depenses.getDescription(),dateDepenses);
                 if (depensesVerif != null)
-                    throw  new BadRequestException("Desole vous avez deja effectué votre depenses journalière de " +categorie.getTitre());
+                    throw  new BadRequestException("Desole vous avez deja effectué votre depenses journalière de " +depenses.getDescription());
 
                 budgetService.updateMontantRestant(depenses);
                 break;
             case  "hebdomadaire" :
-                depensesVerif = depensesRepository.findFirstByUtilisateurAndBudgetAndTypeOrderByDateDesc(user,
-                        budget,type);
+                depensesVerif = depensesRepository.findFirstByUtilisateurAndBudgetAndTypeAndDescriptionOrderByDateDesc(user,
+                        budget,type,depenses.getDescription());
                 if (depensesVerif != null){
-                    if (depensesVerif.getDate().plusDays(7).isAfter(LocalDate.now()))
-                        throw  new BadRequestException("Desole vous avez deja effectué votre depenses hebdomadaire de " +categorie.getTitre());
+                    long diff = ChronoUnit.DAYS.between(depensesVerif.getDate(),dateDepenses) < 0 ? -ChronoUnit.DAYS.between(depensesVerif.getDate(),dateDepenses) : ChronoUnit.DAYS.between(depensesVerif.getDate(),dateDepenses);
+                    if (diff <= 7)
+                        throw  new BadRequestException("Desole vous avez deja effectué votre depenses hebdomadaire de " +depenses.getDescription());
 
                 }
                 budgetService.updateMontantRestant(depenses);
                 break;
             case "mensuelle" :
-                depensesVerif = depensesRepository.findFirstByUtilisateurAndBudgetAndTypeOrderByDateDesc(user,
-                        budget,type);
+                depensesVerif = depensesRepository.findFirstByUtilisateurAndBudgetAndTypeAndDescriptionOrderByDateDesc(user,
+                        budget,type,depenses.getDescription());
                 if (depensesVerif != null){
-                    if (depensesVerif.getDate().plusDays(30).isAfter(LocalDate.now()))
+                    long diff = ChronoUnit.DAYS.between(depensesVerif.getDate(),dateDepenses) < 0 ? -ChronoUnit.DAYS.between(depensesVerif.getDate(),dateDepenses) : ChronoUnit.DAYS.between(depensesVerif.getDate(),dateDepenses);
+                    if (diff <= 30)
                         throw  new BadRequestException("Desole vous avez deja effectué votre depenses mensuelle de " +categorie.getTitre());
                 }
                 budgetService.updateMontantRestant(depenses);
@@ -78,6 +83,16 @@ public class DepensesService {
             default:
                 throw  new BadRequestException("Ce type de depense n'existe pas");
 
+        }
+        if (budget.getDepenses().isEmpty()){
+            Budget lastBudget = budget.getParent();
+            if (lastBudget != null){
+                Transfert transfert = transfertRepository.findByBudget(lastBudget);
+                if (transfert == null){
+                    if (lastBudget.getMontantRestant() > 0)
+                        budgetService.transfertBudget(budget,lastBudget);
+                }
+            }
         }
         return depensesRepository.save(depenses);
     }
@@ -105,13 +120,18 @@ public class DepensesService {
 
         return depensesRepository.save(depenses);
     }
-    public String Supprimer(Depenses depenses){
-        Depenses depensesVerif = depensesRepository.findByIdDepenses(depenses.getIdDepenses());
+    public String Supprimer(long id){
+        Depenses depensesVerif = depensesRepository.findByIdDepenses(id);
         if (depensesVerif == null)
             throw  new EntityNotFoundException("cette depenses n'existe pas");
-        budgetService.updateMontantRestant(depenses,"sup");
 
-        depensesRepository.delete(depenses);
+        Budget budget = depensesVerif.getBudget();
+        if (budget.getDateFin().isBefore(LocalDate.now()))
+            throw new BadRequestException("Vous ne pouvez pas supprimer ce depense car son budget est exispiré");
+
+        budgetService.updateMontantRestant(depensesVerif,"sup");
+
+        depensesRepository.delete(depensesVerif);
 
         return "Depenses Supprimer";
     }

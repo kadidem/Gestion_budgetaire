@@ -28,16 +28,18 @@ public class DepensesController {
       return depensesService.modifier(depenses);
     }
   @GetMapping("/read")
-  @Operation(summary = "affichage d'un dépense")
+  @Operation(summary = "Affichage des dépenses")
     public List<Depenses> read(){
        return depensesService.lire();
     }
     @GetMapping("/read/{id}")
-    public Depenses getDepenseById(@Valid @PathVariable long id){
+    @Operation(summary = "Affichage d'un dépense")
+    public Depenses readById(@Valid @PathVariable long id){
        return depensesService.getDepenseById(id);
     }
-  @DeleteMapping("/delete")
-   public  String delete(@Valid @RequestBody Depenses depenses){
-       return depensesService.Supprimer(depenses);
+  @DeleteMapping("/delete/{id}")
+  @Operation(summary = "Suppression d'un dépense")
+   public  String delete(@PathVariable long id){
+       return depensesService.Supprimer(id);
     }
 }
