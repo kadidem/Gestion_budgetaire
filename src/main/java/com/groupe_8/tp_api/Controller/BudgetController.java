@@ -49,10 +49,10 @@ public class BudgetController {
         return new ResponseEntity<>(budgetService.getBudgetById(id),HttpStatus.OK);
     }
 
-    @DeleteMapping("/supprimer")
+    @DeleteMapping("/supprimer/{idBudget}")
     @Operation(summary = "suppression d'un  budget")
-    public ResponseEntity<String> supprimerBudget(@Valid @RequestBody Budget budget){
-        return new ResponseEntity<>(budgetService.deleteBudget(budget),HttpStatus.OK);
+    public ResponseEntity<String> supprimerBudget(@PathVariable long idBudget){
+        return new ResponseEntity<>(budgetService.deleteBudget(idBudget),HttpStatus.OK);
     }
 
     @PostMapping("/test")

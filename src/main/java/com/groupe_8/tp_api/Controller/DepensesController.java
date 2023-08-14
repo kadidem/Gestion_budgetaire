@@ -31,9 +31,9 @@ public class DepensesController {
     public List<Depenses> read(){
        return depensesService.lire();
     }
-  @DeleteMapping("/delete")
+  @DeleteMapping("/delete/{id}")
   @Operation(summary = "Suppression d'un dépense")
-   public  String delete(@RequestBody Depenses depenses){
-       return depensesService.Supprimer(depenses);
+   public  String delete(@PathVariable long id){
+       return depensesService.Supprimer(id);
     }
 }
