@@ -31,7 +31,7 @@ public class Budget {
     private int montant;
 
 
-    @NotNull
+
     @Column(nullable = false)
     private int montantRestant;
 

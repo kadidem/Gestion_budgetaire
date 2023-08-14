@@ -1,5 +1,6 @@
 package com.groupe_8.tp_api.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -17,7 +18,7 @@ public class Categorie {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idCategorie;
 
-    @Column( nullable=false, unique=true)
+    @Column( nullable=false)
     @NotNull(message = "Il faut de contenu pour ce champ")
     private String titre;
 
@@ -26,5 +27,6 @@ public class Categorie {
     private Utilisateur utilisateur;
 
     @OneToMany(mappedBy = "categorie")
+    @JsonIgnore
     private List<Budget> budgets;
 }

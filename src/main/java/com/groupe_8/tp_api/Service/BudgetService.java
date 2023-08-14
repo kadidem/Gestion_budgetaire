@@ -7,6 +7,7 @@ import com.groupe_8.tp_api.Model.Categorie;
 import com.groupe_8.tp_api.Model.Depenses;
 import com.groupe_8.tp_api.Model.Utilisateur;
 import com.groupe_8.tp_api.Repository.BudgetRepository;
+import com.groupe_8.tp_api.Repository.CategorieRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,9 @@ public class BudgetService {
     private BudgetRepository budgetRepository; // Interface BudgetRepository
 
     @Autowired
+    private CategorieRepository categorieRepository;
+
+    @Autowired
     NotificationService notificationService;
     @Autowired
     private TransfertService transfertService;
@@ -29,13 +33,17 @@ public class BudgetService {
     public Budget createBudget(Budget budget){
 
         Utilisateur utilisateur = budget.getUtilisateur(); // Capture de l'utilisateur du budget
-        Categorie categorie = budget.getCategorie(); // Capture de catégorie du budget
+        Categorie categorie = categorieRepository.findByUtilisateurAndIdCategorie(utilisateur,budget.getCategorie().getIdCategorie()); // Capture de catégorie du budget
         LocalDate toDay = LocalDate.now(); // Obtention de la date du jour en type LocalDate
         LocalDate dateDebut = budget.getDateDebut(); // Capture de la date de début du buget à inserer
         //LocalDate dateFin ; // Déclaration du variable de type LocalDate qui vas nous servir de personnaliser la date de fin du budget à inserer
         LocalDate jourMaxDuMois = dateDebut.with(TemporalAdjusters.lastDayOfMonth()); // Obtention du dernier date du mois actuel
         budget.setDateFin(jourMaxDuMois);
+        budget.setMontantRestant(budget.getMontant());
         //=============================================================================================================
+
+        if (categorie == null)
+            throw new BadRequestException("Cet categorie n'existe pas");
 
         if (dateDebut.getMonthValue() < toDay.getMonthValue() || (dateDebut.getYear() != toDay.getYear()))
             throw new BadRequestException("Veuillez choisie une date dans "+toDay.getMonth()+" "+toDay.getYear());

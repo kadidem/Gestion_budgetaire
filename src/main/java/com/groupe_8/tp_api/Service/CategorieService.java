@@ -1,5 +1,6 @@
 package com.groupe_8.tp_api.Service;
 
+import com.groupe_8.tp_api.Exception.BadRequestException;
 import com.groupe_8.tp_api.Model.Categorie;
 import com.groupe_8.tp_api.Repository.CategorieRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -17,6 +18,9 @@ public class CategorieService {
     private CategorieRepository categorieRepository;
 
     public Categorie creer(Categorie categorie){
+        Categorie categorieVerif = categorieRepository.findByUtilisateurAndTitre(categorie.getUtilisateur(), categorie.getTitre());
+        if (categorieVerif != null )
+            throw new BadRequestException("Désolé cet type de catégorie existe déjà");
         return categorieRepository.save(categorie);
     }
     public List<Categorie> lire(){

@@ -32,11 +32,13 @@ public class DepensesService {
 
     public Depenses creer(Depenses depenses){
         LocalDate dateDepenses = depenses.getDate();
-        Budget budget = budgetRepository.findByIdBudget(depenses.getBudget().getIdBudget());
+        Budget budget = budgetRepository.findByIdBudgetAndUtilisateur(depenses.getBudget().getIdBudget(), depenses.getUtilisateur());
         if (budget == null)
             throw  new EntityNotFoundException("Vous n'avez aucun budget pour ce categorie de depenses");
         if (budget.getDateFin().isBefore(LocalDate.now()))
             throw new BadRequestException("ce budget n'est plus valide");
+        if (budget.getDateDebut().isAfter(LocalDate.now()))
+            throw new BadRequestException("ce budget n'est pas encore commencer");
 
         Categorie categorie = budget.getCategorie();
         Utilisateur user = utilisateurRepository.findByIdUtilisateur(depenses.getUtilisateur().getIdUtilisateur());
@@ -113,8 +115,10 @@ public class DepensesService {
          Depenses depensesVerif = depensesRepository.findByIdDepenses(depenses.getIdDepenses());
          if (depensesVerif == null)
              throw  new EntityNotFoundException("cette depenses n'existe pas");
+         if(depensesVerif.getBudget().getDateFin().isBefore(LocalDate.now()))
+             throw new BadRequestException("Vous ne pouvez pas modifier ce depense car son budget est expiré")
          if (!depensesVerif.getDate().equals(depenses.getDate()))
-             throw new EntityNotFoundException("Vous ne pouvez pas changer la date lors de la modification");
+             throw new BadRequestException("Vous ne pouvez pas changer la date lors de la modification");
         if (depenses.getMontant() != depensesVerif.getMontant())
             budgetService.updateMontantRestant(depenses,depensesVerif);
 

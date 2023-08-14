@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @Repository
 public interface BudgetRepository extends JpaRepository<Budget,Long> {
     Budget findByCategorie(Categorie categorie);
+    Budget findByIdBudgetAndUtilisateur(long id,Utilisateur utilisateur);
     Budget findByIdBudget(long id);
     Budget findByUtilisateurAndCategorieAndDateFinIsAfter(Utilisateur utilisateur, Categorie categorie, LocalDate date);
     Budget findFirstByUtilisateurAndCategorieAndDateFinIsBeforeOrderByDateFinDesc(Utilisateur utilisateur,Categorie categorie,LocalDate localDate);
