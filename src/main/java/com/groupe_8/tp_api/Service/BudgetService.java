@@ -8,6 +8,7 @@ import com.groupe_8.tp_api.Model.Depenses;
 import com.groupe_8.tp_api.Model.Utilisateur;
 import com.groupe_8.tp_api.Repository.BudgetRepository;
 import com.groupe_8.tp_api.Repository.CategorieRepository;
+import com.groupe_8.tp_api.Repository.UtilisateurRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,13 +27,16 @@ public class BudgetService {
     private CategorieRepository categorieRepository;
 
     @Autowired
+    private UtilisateurRepository utilisateurRepository;
+
+    @Autowired
     NotificationService notificationService;
     @Autowired
     private TransfertService transfertService;
     //Fonction pour la création d'un budget, elle prend un entrée un objet budget
     public Budget createBudget(Budget budget){
 
-        Utilisateur utilisateur = budget.getUtilisateur(); // Capture de l'utilisateur du budget
+        Utilisateur utilisateur = utilisateurRepository.findByIdUtilisateur(budget.getUtilisateur().getIdUtilisateur()); // Capture de l'utilisateur du budget
         Categorie categorie = categorieRepository.findByUtilisateurAndIdCategorie(utilisateur,budget.getCategorie().getIdCategorie()); // Capture de catégorie du budget
         LocalDate toDay = LocalDate.now(); // Obtention de la date du jour en type LocalDate
         LocalDate dateDebut = budget.getDateDebut(); // Capture de la date de début du buget à inserer

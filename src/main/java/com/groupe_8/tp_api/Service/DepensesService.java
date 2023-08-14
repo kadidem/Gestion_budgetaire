@@ -116,7 +116,7 @@ public class DepensesService {
          if (depensesVerif == null)
              throw  new EntityNotFoundException("cette depenses n'existe pas");
          if(depensesVerif.getBudget().getDateFin().isBefore(LocalDate.now()))
-             throw new BadRequestException("Vous ne pouvez pas modifier ce depense car son budget est expiré")
+             throw new BadRequestException("Vous ne pouvez pas modifier ce depense car son budget est expiré");
          if (!depensesVerif.getDate().equals(depenses.getDate()))
              throw new BadRequestException("Vous ne pouvez pas changer la date lors de la modification");
         if (depenses.getMontant() != depensesVerif.getMontant())
