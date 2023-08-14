@@ -90,6 +90,35 @@ public class NotificationService {
         }
     }
 
+    public void sendNotifTransf (Budget nextBudget,Budget budget){
+        Notification notification = new Notification();
+        Utilisateur utilisateur = budget.getUtilisateur();
+        Categorie categorie = budget.getCategorie();
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        String msg = "Bonjour, Mr/Mme "+utilisateur.getNom()+"\nVotre montant restant qui est "+budget.getMontantRestant()+" du budget du mois de "+
+                budget.getDateFin().getMonth()+" de categorie "+categorie.getTitre()+" a été transferé à votre budget du mois de  "
+                +nextBudget.getDateFin().getMonth();
+
+        notification.setTexte(msg);
+
+        try {
+            mailMessage.setFrom(sender);
+            mailMessage.setTo(utilisateur.getEmail());
+            mailMessage.setText(notification.getTexte());
+            mailMessage.setSubject("Transfert budgetaire");
+
+            javaMailSender.send(mailMessage);
+
+            notification.setUtilisateur(utilisateur);
+            notification.setBudget(budget);
+            notification.setDate(LocalDate.now());
+
+            notificationRepository.save(notification);
+        }catch (Exception e){
+            throw new BadRequestException(e.getMessage());
+        }
+    }
+
     /*public List<Notification> allNotificationByUtilisateur(long idUser){
         List<Notification> notifications = notificationRepository.findByUtilisateur_Id_utilisateur(idUser);
 

@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("/Categorie")
 public class CategorieController {
     private final CategorieService categorieService;
-    @GetMapping("/creer")
+    @PostMapping("/creer")
     @Operation(summary = "création d'une categorie")
       public String creer(@RequestBody Categorie categorie){
          categorieService.creer(categorie);
