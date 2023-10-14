@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -41,6 +42,30 @@ public class BudgetController {
     @Operation(summary = "Affichage la liste  des budgets")
     public ResponseEntity<List<Budget>> listeBudget(){
         return  new ResponseEntity<>(budgetService.allBudget(),HttpStatus.OK);
+    }
+
+    @GetMapping("/list/{idUser}")
+    @Operation(summary = "Affichage la liste  des budgets à travers l'id de l'utilisateur")
+    public ResponseEntity<List<Budget>> listeBudgetByUser(@PathVariable long idUser){
+        return  new ResponseEntity<>(budgetService.allBudgetByUser(idUser),HttpStatus.OK);
+    }
+
+    @GetMapping("/search/{idUser}")
+    @Operation(summary = "Rechercher un budget par sa description")
+    public ResponseEntity<List<Budget>> searchBudgetByDesc(@PathVariable long idUser, @RequestParam("desc") String desc){
+        return  new ResponseEntity<>(budgetService.searchBudget(idUser,desc),HttpStatus.OK);
+    }
+
+    @GetMapping("/trie/{idUser}")
+    @Operation(summary = "Trier les budget par mois et année")
+    public ResponseEntity<List<Budget>> sortByMonthAndYear(@PathVariable long idUser,@RequestParam("date") String date){
+        return  new ResponseEntity<>(budgetService.sortBudgetByMonthAndYear(idUser,date),HttpStatus.OK);
+    }
+
+    @GetMapping("/somme/{idUser}")
+    @Operation(summary = "Retourne la somme total de l'ensemble des budget")
+    public ResponseEntity<HashMap<String,Object>> sommeTotal(@PathVariable long idUser){
+        return  new ResponseEntity<>(budgetService.sommeOfAllBudegtNotFinich(idUser),HttpStatus.OK);
     }
 
     @GetMapping("{id}")

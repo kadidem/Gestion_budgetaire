@@ -32,6 +32,16 @@ public class DepensesController {
     public List<Depenses> read(){
        return depensesService.lire();
     }
+    @GetMapping("{idUtilisateur}/read")
+    @Operation(summary = "Affichage des dépenses")
+    public List<Depenses> readByUser(@PathVariable long idUtilisateur){
+        return depensesService.lireParUser(idUtilisateur);
+    }
+    @GetMapping("/{idBudget}")
+    @Operation(summary = "Affichage des dépenses")
+    public List<Depenses> readByBudget(@PathVariable long idBudget){
+        return depensesService.lireParBudget(idBudget);
+    }
     @GetMapping("/read/{id}")
     @Operation(summary = "Affichage d'un dépense")
     public Depenses readById(@Valid @PathVariable long id){

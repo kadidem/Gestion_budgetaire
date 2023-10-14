@@ -40,10 +40,9 @@ public class CategorieController {
         }
        // return categorieModifiee+" a été remplacée par l'ancienne";
     }
-    @DeleteMapping("/Supprimer")
+    @DeleteMapping("/Supprimer/{idCategorie}")
     @Operation(summary = "suppression  d'un categorie")
-      public String supprimer(@RequestParam("id") long idCategorie){
-       categorieService.supprimer(idCategorie);
-       return "Vous avez supprimé la categorie à l'id "+idCategorie;
+      public String supprimer(@PathVariable long idCategorie){
+       return categorieService.supprimer(idCategorie);
       }
 }

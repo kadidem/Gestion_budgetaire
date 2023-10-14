@@ -105,6 +105,22 @@ public class DepensesService {
         return depensesList;
 
     }
+    public List<Depenses> lireParUser(long idUtilisateur){
+        List<Depenses> depensesList = depensesRepository.findByUtilisateurIdUtilisateur(idUtilisateur);
+        if (depensesList.isEmpty())
+            throw new EntityNotFoundException("Aucune depenses trouvée");
+        return depensesList;
+
+    }
+
+    public List<Depenses> lireParBudget(long idBudget){
+        List<Depenses> depensesList = depensesRepository.findByBudgetIdBudget(idBudget);
+        if (depensesList.isEmpty())
+            throw new EntityNotFoundException("Aucune depenses trouvée");
+        return depensesList;
+
+    }
+
     public Depenses getDepenseById(long idDepenses){
         Depenses depenses=depensesRepository.findByIdDepenses(idDepenses);
         if (depenses == null)

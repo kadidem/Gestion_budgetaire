@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -166,6 +167,9 @@ public class BudgetService {
             //budget.setDateFin(dateFin); // On donne cette date à la date de fin du budget à inserer
         }
 
+        if(budget.getMontantRestant() != budgetVerif.getMontantRestant())
+            throw new BadRequestException("Desolé vous ne pouvez pas modifier le montant restant de votre budget ");
+
         if (budget.getMontant() < (budgetVerif.getMontant() - budgetVerif.getMontantRestant()))
             throw new BadRequestException("Desolé vous ne pouvez pas modifier le montant de votre budget ent deçue de "+(budgetVerif.getMontant() - budgetVerif.getMontantRestant()));
 
@@ -188,6 +192,20 @@ public class BudgetService {
         return budgetRepository.save(budget);
     }
 
+    //Fonction qui retourne la somme de l'ensemble des budget non despasser
+    public HashMap<String,Object> sommeOfAllBudegtNotFinich(long idUser){
+        HashMap<String,Object> hashMap = new HashMap<>();
+        Integer[][] result = budgetRepository.getSommeOfTotalBudgetNotFinish(idUser);
+        if(result[0][0] == null || result[0][1] == null){
+            hashMap.put("Restant",0);
+            hashMap.put("Total",0);
+        }else{
+            hashMap.put("Total",result[0][0]);
+            hashMap.put("Restant",result[0][1]);
+        }
+        return hashMap;
+    }
+
     //Fonction qui permet retourner la liste de tous les budget, elle ne prend rien en paramètre
     public List<Budget> allBudget(){
 
@@ -197,6 +215,45 @@ public class BudgetService {
         // Si la liste est vide, le système lèvera une exception
         if (budgetList.isEmpty())
             throw new NoContentException("Aucun budget trouvé");
+
+        // Dans le cas contraire le système retourne la liste
+        return budgetList;
+    }
+
+    public List<Budget> allBudgetByUser(long idUser){
+
+        // Obtention de tous les budget dans la base de données
+        List<Budget> budgetList = budgetRepository.findByUtilisateurIdUtilisateur(idUser);
+
+        // Si la liste est vide, le système lèvera une exception
+        if (budgetList.isEmpty())
+            throw new EntityNotFoundException("Aucun budget trouvé");
+
+        // Dans le cas contraire le système retourne la liste
+        return budgetList;
+    }
+
+    public List<Budget> searchBudget(long idUser,String desc){
+
+        // Obtention de tous les budget dans la base de données
+        List<Budget> budgetList = budgetRepository.findByUtilisateurIdUtilisateurAndDescriptionContaining(idUser,desc);
+
+        // Si la liste est vide, le système lèvera une exception
+        if (budgetList.isEmpty())
+            throw new EntityNotFoundException("Aucun budget trouvé");
+
+        // Dans le cas contraire le système retourne la liste
+        return budgetList;
+    }
+
+    public List<Budget> sortBudgetByMonthAndYear(long idUser, String date){
+
+        // Obtention de tous les budget dans la base de données
+        List<Budget> budgetList = budgetRepository.getBudgetByMonthAndYear(idUser, "%"+date+"%");
+
+        // Si la liste est vide, le système lèvera une exception
+        if (budgetList.isEmpty())
+            throw new EntityNotFoundException("Aucun budget trouvé");
 
         // Dans le cas contraire le système retourne la liste
         return budgetList;
